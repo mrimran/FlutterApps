@@ -14,8 +14,13 @@ main() {
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return TextControl('Start with this text');
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('App assig 1'),
+        ),
+        body: TextControl('Start with this text'),
+      ),
+    );
   }
 }
-
-

@@ -2,7 +2,7 @@
 
 A new Flutter application.
 
-## Assignment Instructions
+## App Requirements
 
 // 1) Create a new Flutter App (in this project) and output an AppBar and some text
 // below it

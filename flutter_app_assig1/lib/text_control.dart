@@ -24,25 +24,18 @@ class TextControlState extends State<TextControl> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('App assig 1'),
+    return Column(
+      children: <Widget>[
+        RaisedButton(
+          onPressed: () {
+            setState(() {
+              text = 'Text now changed.';
+            });
+          },
+          child: Text('Change Text'),
         ),
-        body: Column(
-          children: <Widget>[
-            RaisedButton(
-              onPressed: (){
-                setState(() {
-                  text = 'Text now changed.';
-                });
-              },
-              child: Text('Change Text'),
-            ),
-            MyText(text)
-          ],
-        ),
-      ),
+        MyText(text)
+      ],
     );
   }
 }

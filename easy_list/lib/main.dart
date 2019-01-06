@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-//import './pages/auth.dart';
+import './pages/auth.dart';
 import './pages/product.dart';
 import './pages/home.dart';
 import './pages/product_admin.dart';
@@ -17,7 +17,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  List<Map<String, String>> _products = [];
+  List<Map> _products = [];
 
   void _addProduct(Map product) {
     setState(() {
@@ -39,8 +39,10 @@ class _MyAppState extends State<MyApp> {
       //home: AuthPage(),
       routes: {
         '/': (BuildContext context) =>
-            HomePage(_products, _addProduct, _deleteProduct),
-        '/product_admin_page': (BuildContext context) => ProductAdminPage()
+            AuthPage(),
+        '/home': (BuildContext context) =>
+            HomePage(_products),
+        '/product_admin_page': (BuildContext context) => ProductAdminPage(_addProduct, _deleteProduct)
       },
       onGenerateRoute: (RouteSettings settings) {
         //on handle dynamic named routes like /product/:id
@@ -67,7 +69,7 @@ class _MyAppState extends State<MyApp> {
         //When onGenerateRoute even fails, so this can be used to through 404 or maybe get back user to home page.
         return MaterialPageRoute(
             builder: (BuildContext context) =>
-                HomePage(_products, _addProduct, _deleteProduct));
+                HomePage(_products));
       },
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+//import 'package:flutter/rendering.dart';
 
 import './pages/auth.dart';
 import './pages/product.dart';
@@ -6,6 +7,7 @@ import './pages/home.dart';
 import './pages/product_admin.dart';
 
 void main() {
+  //debugPaintSizeEnabled = true;
   runApp(MyApp());
 }
 

@@ -1,11 +1,15 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../widgets/products/price_tag.dart';
+import 'package:easy_list/ui_elements/title_default.dart';
 
 class ProductPage extends StatelessWidget {
   final String title;
   final String imageUrl;
+  final String description;
+  final double price;
 
-  ProductPage(this.title, this.imageUrl);
+  ProductPage(this.title, this.imageUrl, this.description, this.price);
 
   _showWarningDialog(BuildContext context) {
     return showDialog(
@@ -34,6 +38,19 @@ class ProductPage extends StatelessWidget {
     //Navigator.pop(context, true)
   }
 
+  Widget _buildTitlePriceRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        TitleDefault(title),
+        SizedBox(
+          width: 8.0,
+        ),
+        PriceTag(price.toString()),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -46,18 +63,26 @@ class ProductPage extends StatelessWidget {
           appBar: AppBar(
             title: Text('Product Detail'),
           ),
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+          body: ListView(
+            padding: EdgeInsets.all(10.0),
             children: <Widget>[
               Image.asset(imageUrl),
-              Container(padding: EdgeInsets.all(10.0), child: Text(title)),
               Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: RaisedButton(
-                    color: Theme.of(context).accentColor,
-                    child: Text('DELETE'),
-                    onPressed: () => _showWarningDialog(context),
-                  ))
+                padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 0),
+                child: Text(
+                  'Islamabad',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                alignment: Alignment.bottomRight,
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              _buildTitlePriceRow(),
+              SizedBox(
+                height: 10.0,
+              ),
+              Text(description),
             ],
           ),
         ));

@@ -14,46 +14,76 @@ class AuthPageState extends State<AuthPage> {
   String email = '';
   String password = '';
 
+  DecorationImage _buildBackgroundImage() {
+    return DecorationImage(
+        fit: BoxFit.cover,
+        colorFilter:
+            ColorFilter.mode(Colors.black.withOpacity(0.4), BlendMode.dstATop),
+        image: AssetImage('assets/background.jpg'));
+  }
+
+  Widget _buildEmailTextField() {
+    return TextField(
+      onChanged: (String email) {
+        setState(() {
+          this.email = email;
+        });
+      },
+      decoration: InputDecoration(
+          labelText: 'Email', filled: true, fillColor: Colors.white),
+      keyboardType: TextInputType.emailAddress,
+    );
+  }
+
+  Widget _buildPasswordTextField() {
+    return TextField(
+      onChanged: (String password) {
+        setState(() {
+          this.password = password;
+        });
+      },
+      obscureText: true,
+      decoration: InputDecoration(
+          labelText: 'Password', filled: true, fillColor: Colors.white),
+    );
+  }
+
+  void _submitForm() {
+    Navigator.pushReplacementNamed(context, '/home');
+  }
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    final double deviceWidth = MediaQuery.of(context).size.width;//Media query
+    final double targetWidth = deviceWidth > 768.0 ? 500.0 : deviceWidth * 0.95;
+
     return Scaffold(
         appBar: AppBar(
           title: Text('Login'),
         ),
         body: Container(
-          margin: EdgeInsets.all(10.0),
-          child: ListView(
-            children: <Widget>[
-              TextField(
-                onChanged: (String email) {
-                  setState(() {
-                    this.email = email;
-                  });
-                },
-                decoration: InputDecoration(labelText: 'Email'),
-                keyboardType: TextInputType.emailAddress,
+          decoration: BoxDecoration(image: _buildBackgroundImage()),
+          padding: EdgeInsets.all(10.0),
+          child: Center(
+              child: SingleChildScrollView(
+                  child: Container(
+                    width: targetWidth,//80% of our device width
+            child: Column(children: <Widget>[
+              _buildEmailTextField(),
+              SizedBox(
+                height: 10.0,
               ),
-              TextField(
-                onChanged: (String password) {
-                  setState(() {
-                    this.password = password;
-                  });
-                },
-                obscureText: true,
-                decoration: InputDecoration(labelText: 'Password'),
+              _buildPasswordTextField(),
+              SizedBox(
+                height: 10.0,
               ),
-              SizedBox(height: 10.0,),
               RaisedButton(
-                color: Theme.of(context).primaryColor,
                 textColor: Colors.white,
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/home');
-                },
+                onPressed: _submitForm,
                 child: Text('LOGIN'),
               ),
-            ],
-          ),
+            ]),
+          ))),
         ));
   }
 }

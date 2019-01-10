@@ -37,14 +37,13 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-          primarySwatch: Colors.deepOrange, accentColor: Colors.deepPurple),
+          primarySwatch: Colors.deepOrange, accentColor: Colors.deepPurple, buttonColor: Colors.deepPurple),
       //home: AuthPage(),
       routes: {
-        '/': (BuildContext context) =>
-            AuthPage(),
-        '/home': (BuildContext context) =>
-            HomePage(_products),
-        '/product_admin_page': (BuildContext context) => ProductAdminPage(_addProduct, _deleteProduct)
+        '/': (BuildContext context) => AuthPage(),
+        '/home': (BuildContext context) => HomePage(_products),
+        '/product_admin_page': (BuildContext context) =>
+            ProductAdminPage(_addProduct, _deleteProduct)
       },
       onGenerateRoute: (RouteSettings settings) {
         //on handle dynamic named routes like /product/:id
@@ -62,7 +61,10 @@ class _MyAppState extends State<MyApp> {
 
           return MaterialPageRoute<bool>(
               builder: (BuildContext context) => ProductPage(
-                  _products[index]['title'], _products[index]['image']));
+                  _products[index]['title'],
+                  _products[index]['image'],
+                  _products[index]['description'],
+                  _products[index]['price']));
         }
 
         return null;
@@ -70,8 +72,7 @@ class _MyAppState extends State<MyApp> {
       onUnknownRoute: (RouteSettings settings) {
         //When onGenerateRoute even fails, so this can be used to through 404 or maybe get back user to home page.
         return MaterialPageRoute(
-            builder: (BuildContext context) =>
-                HomePage(_products));
+            builder: (BuildContext context) => HomePage(_products));
       },
     );
   }

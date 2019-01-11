@@ -17,22 +17,28 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
   String titleValue = '';
   String descriptionValue = '';
   double priceValue = 0.0;
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   Widget _buildTitleTextField() {
-    return TextField(
-      onChanged: (String value) {
+    return TextFormField(
+      onSaved: (String value) {
         setState(() {
           titleValue = value;
         });
       },
       decoration: InputDecoration(labelText: 'Product title'),
+      validator: (String value) {
+        if(value.isEmpty) {
+          return 'Title is required.';
+        }
+      },
     );
   }
 
   Widget _buildDescriptionTextField() {
-    return TextField(
+    return TextFormField(
       maxLines: 3,
-      onChanged: (String desc) {
+      onSaved: (String desc) {
         descriptionValue = desc;
       },
       decoration: InputDecoration(labelText: 'Product description'),
@@ -40,9 +46,9 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
   }
 
   Widget _buildPriceTextField() {
-    return TextField(
+    return TextFormField(
       keyboardType: TextInputType.number,
-      onChanged: (String price) {
+      onSaved: (String price) {
         priceValue = double.parse(price);
       },
       decoration: InputDecoration(labelText: 'Product price'),
@@ -50,6 +56,11 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
   }
 
   void _submitForm() {
+    if(!formKey.currentState.validate()) {
+      return;
+    }
+
+    formKey.currentState.save();
     final Map product = {
       'title': titleValue,
       'description': descriptionValue,
@@ -69,7 +80,9 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
     // TODO: implement build
     return Container(
         margin: EdgeInsets.all(10.0),
-        child: ListView(
+        child: Form(
+          key: formKey,
+            child: ListView(
           padding: EdgeInsets.symmetric(horizontal: targetPadding),
           children: <Widget>[
             _buildTitleTextField(),
@@ -86,6 +99,6 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
               child: Text('Save'),
             )
           ],
-        ));
+        )));
   }
 }

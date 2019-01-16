@@ -17,29 +17,38 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
   String titleValue = '';
   String descriptionValue = '';
   double priceValue = 0.0;
+  final Map formData = {
+    'title': null,
+    'description': null,
+    'price': null,
+    'image': 'assets/food.jpg'
+  };
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   Widget _buildTitleTextField() {
     return TextFormField(
-      onSaved: (String value) {
-        setState(() {
-          titleValue = value;
-        });
-      },
-      decoration: InputDecoration(labelText: 'Product title'),
       validator: (String value) {
-        if(value.isEmpty) {
-          return 'Title is required.';
+        if (value.isEmpty || value.length < 5) {
+          return 'Title is required and should be 5+ characters long.';
         }
       },
+      onSaved: (String value) {
+        formData['title'] = value;
+      },
+      decoration: InputDecoration(labelText: 'Product title'),
     );
   }
 
   Widget _buildDescriptionTextField() {
     return TextFormField(
       maxLines: 3,
+      validator: (String value) {
+        if (value.isEmpty || value.length < 10) {
+          return 'Title is required and should be 10+ characters long.';
+        }
+      },
       onSaved: (String desc) {
-        descriptionValue = desc;
+        formData['description'] = desc;
       },
       decoration: InputDecoration(labelText: 'Product description'),
     );
@@ -48,26 +57,26 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
   Widget _buildPriceTextField() {
     return TextFormField(
       keyboardType: TextInputType.number,
+      validator: (String value) {
+        if (value.isEmpty ||
+            !RegExp(r'^(?:[1-9]\d*|0)?(?:[.]\d+)?$').hasMatch(value)) {
+          return 'Title is required and should be a valid number.';
+        }
+      },
       onSaved: (String price) {
-        priceValue = double.parse(price);
+        formData['price'] = double.parse(price);
       },
       decoration: InputDecoration(labelText: 'Product price'),
     );
   }
 
   void _submitForm() {
-    if(!formKey.currentState.validate()) {
+    if (!formKey.currentState.validate()) {
       return;
     }
 
     formKey.currentState.save();
-    final Map product = {
-      'title': titleValue,
-      'description': descriptionValue,
-      'price': priceValue,
-      'image': 'assets/food.jpg'
-    };
-    widget.addProduct(product);
+    widget.addProduct(formData);
     Navigator.pushReplacementNamed(context, '/home');
   }
 
@@ -78,27 +87,31 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
     final double targetPadding = deviceWidth - targetWidth;
 
     // TODO: implement build
-    return Container(
-        margin: EdgeInsets.all(10.0),
-        child: Form(
-          key: formKey,
-            child: ListView(
-          padding: EdgeInsets.symmetric(horizontal: targetPadding),
-          children: <Widget>[
-            _buildTitleTextField(),
-            Text(titleValue),
-            _buildDescriptionTextField(),
-            _buildPriceTextField(),
-            SizedBox(
-              height: 10.0,
-            ),
-            RaisedButton(
-              color: Theme.of(context).accentColor,
-              textColor: Colors.white,
-              onPressed: _submitForm,
-              child: Text('Save'),
-            )
-          ],
-        )));
+    return GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(FocusNode());//close the keyboard when we tap outside of input fields of the form.
+        },
+        child: Container(
+            margin: EdgeInsets.all(10.0),
+            child: Form(
+                key: formKey,
+                child: ListView(
+                  padding: EdgeInsets.symmetric(horizontal: targetPadding),
+                  children: <Widget>[
+                    _buildTitleTextField(),
+                    Text(titleValue),
+                    _buildDescriptionTextField(),
+                    _buildPriceTextField(),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    RaisedButton(
+                      color: Theme.of(context).accentColor,
+                      textColor: Colors.white,
+                      onPressed: _submitForm,
+                      child: Text('Save'),
+                    )
+                  ],
+                ))));
   }
 }

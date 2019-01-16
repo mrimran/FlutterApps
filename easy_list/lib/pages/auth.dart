@@ -11,8 +11,9 @@ class AuthPage extends StatefulWidget {
 }
 
 class AuthPageState extends State<AuthPage> {
-  String email = '';
-  String password = '';
+  final Map formData = {'email': null, 'password': null};
+
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   DecorationImage _buildBackgroundImage() {
     return DecorationImage(
@@ -23,11 +24,16 @@ class AuthPageState extends State<AuthPage> {
   }
 
   Widget _buildEmailTextField() {
-    return TextField(
-      onChanged: (String email) {
-        setState(() {
-          this.email = email;
-        });
+    return TextFormField(
+      validator: (String value) {
+        if (!RegExp(
+                r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+            .hasMatch(value)) {
+          return 'Enter a valid email address e.g. example@example.com';
+        }
+      },
+      onSaved: (String email) {
+        formData['email'] = email;
       },
       decoration: InputDecoration(
           labelText: 'Email', filled: true, fillColor: Colors.white),
@@ -36,11 +42,14 @@ class AuthPageState extends State<AuthPage> {
   }
 
   Widget _buildPasswordTextField() {
-    return TextField(
-      onChanged: (String password) {
-        setState(() {
-          this.password = password;
-        });
+    return TextFormField(
+      validator: (String value) {
+        if(value.isEmpty || value.length < 5) {
+          return 'Enter a password having 5+ characters.';
+        }
+      },
+      onSaved: (String password) {
+        formData['password'] = password;
       },
       obscureText: true,
       decoration: InputDecoration(
@@ -49,12 +58,16 @@ class AuthPageState extends State<AuthPage> {
   }
 
   void _submitForm() {
+    if (!formKey.currentState.validate()) {
+      return;
+    }
+
     Navigator.pushReplacementNamed(context, '/home');
   }
 
   @override
   Widget build(BuildContext context) {
-    final double deviceWidth = MediaQuery.of(context).size.width;//Media query
+    final double deviceWidth = MediaQuery.of(context).size.width; //Media query
     final double targetWidth = deviceWidth > 768.0 ? 500.0 : deviceWidth * 0.95;
 
     return Scaffold(
@@ -67,22 +80,24 @@ class AuthPageState extends State<AuthPage> {
           child: Center(
               child: SingleChildScrollView(
                   child: Container(
-                    width: targetWidth,//80% of our device width
-            child: Column(children: <Widget>[
-              _buildEmailTextField(),
-              SizedBox(
-                height: 10.0,
-              ),
-              _buildPasswordTextField(),
-              SizedBox(
-                height: 10.0,
-              ),
-              RaisedButton(
-                textColor: Colors.white,
-                onPressed: _submitForm,
-                child: Text('LOGIN'),
-              ),
-            ]),
+            width: targetWidth, //80% of our device width
+            child: Form(
+                key: formKey,
+                child: Column(children: <Widget>[
+                  _buildEmailTextField(),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  _buildPasswordTextField(),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  RaisedButton(
+                    textColor: Colors.white,
+                    onPressed: _submitForm,
+                    child: Text('LOGIN'),
+                  ),
+                ])),
           ))),
         ));
   }

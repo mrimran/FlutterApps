@@ -2,14 +2,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../widgets/products/price_tag.dart';
 import 'package:easy_list/ui_elements/title_default.dart';
+import 'package:scoped_model/scoped_model.dart';
+
+import '../scoped_models/products.dart';
+import '../models/product.dart';
 
 class ProductPage extends StatelessWidget {
-  final String title;
-  final String imageUrl;
-  final String description;
-  final double price;
+  final int productIndex;
 
-  ProductPage(this.title, this.imageUrl, this.description, this.price);
+  ProductPage(this.productIndex);
 
   _showWarningDialog(BuildContext context) {
     return showDialog(
@@ -38,7 +39,7 @@ class ProductPage extends StatelessWidget {
     //Navigator.pop(context, true)
   }
 
-  Widget _buildTitlePriceRow() {
+  Widget _buildTitlePriceRow(String title, double price) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -54,37 +55,39 @@ class ProductPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return WillPopScope(
-        onWillPop: () {
-          Navigator.pop(context, false);
-          return Future.value(false); //ignore original pop request
-        },
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text('Product Detail'),
-          ),
-          body: ListView(
-            padding: EdgeInsets.all(10.0),
-            children: <Widget>[
-              Image.asset(imageUrl),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 0),
-                child: Text(
-                  'Islamabad',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                alignment: Alignment.bottomRight,
+    return WillPopScope(onWillPop: () {
+      Navigator.pop(context, false);
+      return Future.value(false); //ignore original pop request
+    }, child: ScopedModelDescendant<ProductsModel>(
+        builder: (BuildContext context, Widget child, ProductsModel model) {
+      final Product product = model.products[productIndex];
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Product Detail'),
+        ),
+        body: ListView(
+          padding: EdgeInsets.all(10.0),
+          children: <Widget>[
+            Image.asset(product.image),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 0),
+              child: Text(
+                'Islamabad',
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              SizedBox(
-                height: 10.0,
-              ),
-              _buildTitlePriceRow(),
-              SizedBox(
-                height: 10.0,
-              ),
-              Text(description),
-            ],
-          ),
-        ));
+              alignment: Alignment.bottomRight,
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
+            _buildTitlePriceRow(product.title, product.price),
+            SizedBox(
+              height: 10.0,
+            ),
+            Text(product.description),
+          ],
+        ),
+      );
+    }));
   }
 }

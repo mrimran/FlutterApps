@@ -3,10 +3,6 @@ import 'package:flutter/material.dart';
 import '../widgets/products/products.dart';
 
 class HomePage extends StatelessWidget {
-  final List<Map> products;
-
-  HomePage(this.products);
-
   Widget _buildSideDrawer(BuildContext context) {
     return Drawer(
       child: Column(
@@ -29,7 +25,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(products);
     return Scaffold(
       drawer: _buildSideDrawer(context),
       appBar: AppBar(
@@ -41,7 +36,7 @@ class HomePage extends StatelessWidget {
           )
         ],
       ),
-      body: Products(products),
+      body: Products(),
     );
   }
 }

@@ -94,12 +94,12 @@ class _ProductEditPageState extends State<ProductEditPage> {
     Navigator.pushReplacementNamed(context, '/home');
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _builPageContent(BuildContext context) {
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double targetWidth = deviceWidth > 768.0 ? 600 : deviceWidth * 0.95;
     final double targetPadding = deviceWidth - targetWidth;
-    final Widget pageContent = GestureDetector(
+
+    return GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(
               FocusNode()); //close the keyboard when we tap outside of input fields of the form.
@@ -126,8 +126,12 @@ class _ProductEditPageState extends State<ProductEditPage> {
                     )
                   ],
                 ))));
+  }
 
-    // TODO: implement build
+  @override
+  Widget build(BuildContext context) {
+    final Widget pageContent =_builPageContent(context);
+
     return widget.product == null
         ? pageContent
         : Scaffold(

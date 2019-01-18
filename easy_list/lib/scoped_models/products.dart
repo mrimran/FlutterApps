@@ -41,4 +41,11 @@ class ProductsModel extends Model {
 
     return _products[_selectedProductIndex];
   }
+
+  void toggleProductFavorite() {
+    _products[_selectedProductIndex].isFavorite = !_products[_selectedProductIndex].isFavorite;
+    _selectedProductIndex = null;
+
+    notifyListeners();//notify view to reload and update the change of the favt icon
+  }
 }

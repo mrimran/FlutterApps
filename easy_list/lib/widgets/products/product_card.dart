@@ -5,7 +5,7 @@ import './price_tag.dart';
 import 'package:easy_list/ui_elements/title_default.dart';
 import './address_tag.dart';
 import '../../models/product.dart';
-import '../../scoped_models/products.dart';
+import '../../scoped_models/main.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -36,8 +36,8 @@ class ProductCard extends StatelessWidget {
           onPressed: () => Navigator.pushNamed<bool>(
               context, '/product/' + productIndex.toString()),
         ),
-        ScopedModelDescendant(
-          builder: (BuildContext context, Widget child, ProductsModel model) {
+        ScopedModelDescendant<MainModel>(
+          builder: (BuildContext context, Widget child, MainModel model) {
             return IconButton(
               icon: Icon(model.products[productIndex].isFavorite
                   ? Icons.favorite
@@ -66,6 +66,7 @@ class ProductCard extends StatelessWidget {
           ),
           _buildTitlePriceRow(),
           AddressTag('Islamabad'),
+          Text(product.user != null ? product.user.email : ''),
           _buildActionButtons(context)
         ],
       ),

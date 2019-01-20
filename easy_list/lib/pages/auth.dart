@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
 
-import './home.dart';
+import '../scoped_models/main.dart';
 
 class AuthPage extends StatefulWidget {
   @override
@@ -44,7 +45,7 @@ class AuthPageState extends State<AuthPage> {
   Widget _buildPasswordTextField() {
     return TextFormField(
       validator: (String value) {
-        if(value.isEmpty || value.length < 5) {
+        if (value.isEmpty || value.length < 5) {
           return 'Enter a password having 5+ characters.';
         }
       },
@@ -57,10 +58,14 @@ class AuthPageState extends State<AuthPage> {
     );
   }
 
-  void _submitForm() {
+  void _submitForm(Function login) {
     if (!formKey.currentState.validate()) {
       return;
     }
+
+    formKey.currentState.save();
+
+    login(formData['email'], formData['password']);
 
     Navigator.pushReplacementNamed(context, '/home');
   }
@@ -92,10 +97,15 @@ class AuthPageState extends State<AuthPage> {
                   SizedBox(
                     height: 10.0,
                   ),
-                  RaisedButton(
-                    textColor: Colors.white,
-                    onPressed: _submitForm,
-                    child: Text('LOGIN'),
+                  ScopedModelDescendant<MainModel>(
+                    builder:
+                        (BuildContext context, Widget child, MainModel model) {
+                      return RaisedButton(
+                        textColor: Colors.white,
+                        onPressed: () => _submitForm(model.login),
+                        child: Text('LOGIN'),
+                      );
+                    },
                   ),
                 ])),
           ))),

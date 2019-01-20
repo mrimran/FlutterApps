@@ -1,33 +1,44 @@
 import 'package:scoped_model/scoped_model.dart';
 
 import '../models/product.dart';
+import '../models/user.dart';
 
-class ProductsModel extends Model {
+mixin ProductsModel on Model {
   List<Product> _products = [];
   int _selectedProductIndex;
+  bool _showFav = false;
 
   List<Product> get products {
     //Making clone of original List so we make changes in clone not the original one.
     return List.from(_products);
   }
 
+  List<Product> get displayedProducts {
+    if(_showFav) {
+      return _products.where((Product product) => product.isFavorite).toList();
+    }
+
+    return List.from(_products);
+  }
+
   void addProduct(Product product) {
     _products.add(product);
-    _selectedProductIndex = null;
   }
 
   void updateProduct(Product product) {
     _products[_selectedProductIndex] = product;
-    _selectedProductIndex = null;
   }
 
   void deleteProduct() {
     _products.removeAt(_selectedProductIndex);
-    _selectedProductIndex = null;
   }
 
   void selectProduct(int index) {
     _selectedProductIndex = index;
+
+    if (_selectedProductIndex != null) {
+      notifyListeners();
+    }
   }
 
   int get selectedProductIndex {
@@ -44,8 +55,17 @@ class ProductsModel extends Model {
 
   void toggleProductFavorite() {
     _products[_selectedProductIndex].isFavorite = !_products[_selectedProductIndex].isFavorite;
-    _selectedProductIndex = null;
 
     notifyListeners();//notify view to reload and update the change of the favt icon
+  }
+
+  void toggleFavDisplayMode() {
+    _showFav = !_showFav;
+
+    notifyListeners();
+  }
+
+  bool get displayFavOnly {
+      return _showFav;
   }
 }

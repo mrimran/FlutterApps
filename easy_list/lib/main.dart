@@ -7,8 +7,7 @@ import './pages/auth.dart';
 import './pages/product.dart';
 import './pages/home.dart';
 import './pages/product_admin.dart';
-import './models/product.dart';
-import './scoped_models/products.dart';
+import './scoped_models/main.dart';
 
 void main() {
   //debugPaintSizeEnabled = true;
@@ -25,8 +24,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return ScopedModel<ProductsModel>(
-      model: ProductsModel(),//initiating only one instance of the ProductsModel in whole application
+    return ScopedModel<MainModel>(
+      model: MainModel(),//initiating only one instance of the ProductsModel in whole application
       child: MaterialApp(
         theme: ThemeData(
             primarySwatch: Colors.deepOrange,

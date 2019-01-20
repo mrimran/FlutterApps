@@ -4,7 +4,7 @@ import '../widgets/products/price_tag.dart';
 import 'package:easy_list/ui_elements/title_default.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-import '../scoped_models/products.dart';
+import '../scoped_models/main.dart';
 import '../models/product.dart';
 
 class ProductPage extends StatelessWidget {
@@ -58,8 +58,8 @@ class ProductPage extends StatelessWidget {
     return WillPopScope(onWillPop: () {
       Navigator.pop(context, false);
       return Future.value(false); //ignore original pop request
-    }, child: ScopedModelDescendant<ProductsModel>(
-        builder: (BuildContext context, Widget child, ProductsModel model) {
+    }, child: ScopedModelDescendant<MainModel>(
+        builder: (BuildContext context, Widget child, MainModel model) {
       final Product product = model.products[productIndex];
       return Scaffold(
         appBar: AppBar(

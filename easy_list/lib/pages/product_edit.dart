@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 import '../models/product.dart';
 import '../scoped_models/main.dart';
@@ -73,14 +75,21 @@ class _ProductEditPageState extends State<ProductEditPage> {
 
   //model.addProduct, model.updateProduct, model.selectedProductIndex
   //Function addProduct, Function updateProduct, [int selectedProductIndex]
-  void _submitForm(MainModel model) {
+  void _submitForm(MainModel model) async {
     if (!formKey.currentState.validate()) {
       return;
     }
 
     formKey.currentState.save();
 
+    final http.Response res = await http.post(
+        'https://flutter-easylist-35b62.firebaseio.com/products.json',
+        body: json.encode(formData));
+
+    final Map responseData = json.decode(res.body);
+
     Product productData = Product(
+        id: responseData['name'],
         title: formData['title'],
         description: formData['description'],
         price: formData['price'],

@@ -1,7 +1,6 @@
 import 'package:scoped_model/scoped_model.dart';
 
 import '../models/product.dart';
-import '../models/user.dart';
 
 mixin ProductsModel on Model {
   List<Product> _products = [];

@@ -39,7 +39,8 @@ class ProductListPage extends StatelessWidget {
               children: <Widget>[
                 ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: AssetImage(model.products[index].image),
+                    //backgroundImage: AssetImage(model.products[index].image),
+                    backgroundImage: NetworkImage(model.products[index].image),
                   ),
                   title: Text(model.products[index].title),
                   subtitle: Text('\$${model.products[index].price.toString()}'),

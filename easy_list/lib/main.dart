@@ -24,8 +24,9 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
+    final model = MainModel();
     return ScopedModel<MainModel>(
-      model: MainModel(),//initiating only one instance of the ProductsModel in whole application
+      model: model,//initiating only one instance of the ProductsModel in whole application
       child: MaterialApp(
         theme: ThemeData(
             primarySwatch: Colors.deepOrange,
@@ -34,7 +35,7 @@ class _MyAppState extends State<MyApp> {
         //home: AuthPage(),
         routes: {
           '/': (BuildContext context) => AuthPage(),
-          '/home': (BuildContext context) => HomePage(),
+          '/home': (BuildContext context) => HomePage(model),
           '/product_admin_page': (BuildContext context) => ProductAdminPage()
         },
         onGenerateRoute: (RouteSettings settings) {
@@ -61,7 +62,7 @@ class _MyAppState extends State<MyApp> {
         onUnknownRoute: (RouteSettings settings) {
           //When onGenerateRoute even fails, so this can be used to through 404 or maybe get back user to home page.
           return MaterialPageRoute(
-              builder: (BuildContext context) => HomePage());
+              builder: (BuildContext context) => HomePage(model));
         },
       ),
     );

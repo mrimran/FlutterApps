@@ -21,7 +21,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
     'title': null,
     'description': null,
     'price': null,
-    'image': 'assets/food.jpg'
+    'image': "https://kuulpeeps.com/wp-content/uploads/2018/10/chocolate.gif"
   };
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -76,16 +76,16 @@ class _ProductEditPageState extends State<ProductEditPage> {
   //model.addProduct, model.updateProduct, model.selectedProductIndex
   //Function addProduct, Function updateProduct, [int selectedProductIndex]
   void _submitForm(MainModel model) async {
+    //print(formData);return;
     if (!formKey.currentState.validate()) {
       return;
     }
 
-    formKey.currentState.save();
+    formKey.currentState.save(); //TODO: Experiment with this
 
-    final http.Response res = await http.post(
-        'https://flutter-easylist-35b62.firebaseio.com/products.json',
-        body: json.encode(formData));
+    formData['userId'] = model.authUser.id;
 
+    final http.Response res = await model.saveProductOnServer(formData);
     final Map responseData = json.decode(res.body);
 
     Product productData = Product(
@@ -94,7 +94,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
         description: formData['description'],
         price: formData['price'],
         image: formData['image'],
-        user: model.authUser);
+        userId: model.authUser.id);
 
     if (model.selectedProductIndex == null) {
       model.addProduct(productData);

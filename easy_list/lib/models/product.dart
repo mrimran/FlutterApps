@@ -9,7 +9,7 @@ class Product {
   final double price;
   final String image;
   bool isFavorite;
-  User user;
+  String userId;
 
   Product(
       {@required this.id,
@@ -18,5 +18,17 @@ class Product {
       @required this.price,
       @required this.image,
       this.isFavorite = false,
-      this.user});
+      this.userId});
+
+  Map get toMap {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'price': price,
+      'image': image,
+      'isFavorite': isFavorite,
+      'userId': userId
+    };
+  }
 }

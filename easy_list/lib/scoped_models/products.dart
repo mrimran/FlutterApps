@@ -8,8 +8,10 @@ mixin ProductsModel on Model {
   List<Product> _products = [];
   int _selectedProductIndex;
   bool _showFav = false;
+  bool isLoading = false;
+
   final productsEndpoint =
-      'https://flutter-easylist-35b62.firebaseio.com/products.json';
+      'https://flutter-easylist-35b62.firebaseio.com/';
 
   List<Product> get products {
     //Making clone of original List so we make changes in clone not the original one.
@@ -28,16 +30,27 @@ mixin ProductsModel on Model {
     _products.add(product);
   }
 
-  Future saveProductOnServer(Map productData) async {
-    return await http.post(productsEndpoint, body: json.encode(productData));
+  Future saveProductOnServer(Map productData, {String productId = ''}) async {
+    if(productId.isEmpty) {
+      return await http.post(productsEndpoint + 'products.json', body: json.encode(productData));
+    } else {
+      print(productsEndpoint + '$productId.json');
+      return await http.put(productsEndpoint + 'products/$productId.json', body: json.encode(productData));
+    }
   }
 
   void updateProduct(Product product) {
     _products[_selectedProductIndex] = product;
   }
 
-  void deleteProduct() {
+  void deleteProduct() async {
+    final delProductId = this.selectedProduct.id;
     _products.removeAt(_selectedProductIndex);
+    this._selectedProductIndex = null;
+
+    this.toggleIsLoading();
+    await http.delete(productsEndpoint + 'products/$delProductId.json');
+    this.toggleIsLoading();
   }
 
   void selectProduct(int index) {
@@ -74,7 +87,9 @@ mixin ProductsModel on Model {
   }
 
   void fetchProducts() async {
-    http.Response res = await http.get(productsEndpoint);
+    this.isLoading = true;
+
+    http.Response res = await http.get(productsEndpoint + 'products.json');
     final Map<String, dynamic> productListData = json.decode(res.body);
     final List<Product> fetchedProductList = [];
 
@@ -96,10 +111,18 @@ mixin ProductsModel on Model {
     }
 
     _products = fetchedProductList;
+
+    this.isLoading = false;
+
     notifyListeners();
   }
 
   bool get displayFavOnly {
     return _showFav;
+  }
+
+  void toggleIsLoading() {
+    this.isLoading = !this.isLoading;
+    notifyListeners();
   }
 }

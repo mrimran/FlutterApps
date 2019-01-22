@@ -68,7 +68,7 @@ class ProductPage extends StatelessWidget {
         body: ListView(
           padding: EdgeInsets.all(10.0),
           children: <Widget>[
-            Image.asset(product.image),
+            Image.network(product.image),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 0),
               child: Text(

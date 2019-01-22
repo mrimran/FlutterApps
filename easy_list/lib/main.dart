@@ -36,7 +36,7 @@ class _MyAppState extends State<MyApp> {
         routes: {
           '/': (BuildContext context) => AuthPage(),
           '/home': (BuildContext context) => HomePage(model),
-          '/product_admin_page': (BuildContext context) => ProductAdminPage()
+          '/product_admin_page': (BuildContext context) => ProductAdminPage(model)
         },
         onGenerateRoute: (RouteSettings settings) {
           //on handle dynamic named routes like /product/:id

@@ -85,11 +85,20 @@ class _ProductEditPageState extends State<ProductEditPage> {
 
     formData['userId'] = model.authUser.id;
 
-    final http.Response res = await model.saveProductOnServer(formData);
+    model.toggleIsLoading();
+
+    String productId = model.selectedProduct == null ? '' : model.selectedProduct.id;
+
+    final http.Response res = await model.saveProductOnServer(formData,
+        productId: productId);
     final Map responseData = json.decode(res.body);
 
+    model.toggleIsLoading();
+
     Product productData = Product(
-        id: responseData['name'],
+        id: model.selectedProductIndex == null
+            ? responseData['name']
+            : model.selectedProduct.id,
         title: formData['title'],
         description: formData['description'],
         price: formData['price'],
@@ -107,12 +116,16 @@ class _ProductEditPageState extends State<ProductEditPage> {
   }
 
   Widget _buildSubmitButton(MainModel model) {
-    return RaisedButton(
-      color: Theme.of(context).accentColor,
-      textColor: Colors.white,
-      onPressed: () => _submitForm(model),
-      child: Text('Save'),
-    );
+    return model.isLoading
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : RaisedButton(
+            color: Theme.of(context).accentColor,
+            textColor: Colors.white,
+            onPressed: () => _submitForm(model),
+            child: Text('Save'),
+          );
   }
 
   Widget _builPageContent(BuildContext context, MainModel model) {

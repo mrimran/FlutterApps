@@ -87,28 +87,54 @@ class _ProductEditPageState extends State<ProductEditPage> {
 
     model.toggleIsLoading();
 
-    String productId = model.selectedProduct == null ? '' : model.selectedProduct.id;
+    String productId =
+        model.selectedProduct == null ? '' : model.selectedProduct.id;
 
-    final http.Response res = await model.saveProductOnServer(formData,
-        productId: productId);
-    final Map responseData = json.decode(res.body);
+    String error = "";
+    http.Response res;
+
+    try {
+      res = await model.saveProductOnServer(formData, productId: productId);
+
+      final Map responseData = json.decode(res.body);
+
+      Product productData = Product(
+          id: model.selectedProductId == null
+              ? responseData['name']
+              : model.selectedProduct.id,
+          title: formData['title'],
+          description: formData['description'],
+          price: formData['price'],
+          image: formData['image'],
+          userId: model.authUser.id);
+
+      if (model.selectedProductId == null) {
+        model.addProduct(productData);
+      } else {
+        model.updateProduct(productData);
+      }
+    } catch (e) {
+      error = e.toString();
+    }
 
     model.toggleIsLoading();
 
-    Product productData = Product(
-        id: model.selectedProductIndex == null
-            ? responseData['name']
-            : model.selectedProduct.id,
-        title: formData['title'],
-        description: formData['description'],
-        price: formData['price'],
-        image: formData['image'],
-        userId: model.authUser.id);
-
-    if (model.selectedProductIndex == null) {
-      model.addProduct(productData);
-    } else {
-      model.updateProduct(productData);
+    if (error.isNotEmpty) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Something went wrong.'),
+              content: Text(error),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('OK'),
+                  onPressed: () => Navigator.of(context).pop(),
+                )
+              ],
+            );
+          });
+      return;
     }
 
     Navigator.pushReplacementNamed(context, '/home')
@@ -163,8 +189,9 @@ class _ProductEditPageState extends State<ProductEditPage> {
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
         final Widget pageContent = _builPageContent(context, model);
+        print("****** ${model.selectedProductId}");
 
-        return model.selectedProductIndex == null
+        return model.selectedProductId == null
             ? pageContent
             : Scaffold(
                 appBar: AppBar(title: Text('Edit Product')), body: pageContent);

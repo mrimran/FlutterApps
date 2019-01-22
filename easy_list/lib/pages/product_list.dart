@@ -26,7 +26,7 @@ class ProductListPageState extends State<ProductListPage> {
     return IconButton(
         icon: Icon(Icons.edit),
         onPressed: () {
-          model.selectProduct(index);
+          model.selectProduct(model.products[index].id);
           Navigator.of(context)
               .push(MaterialPageRoute(builder: (BuildContext context) {
             return ProductEditPage();
@@ -45,8 +45,11 @@ class ProductListPageState extends State<ProductListPage> {
             key: Key(index.toString()),
             onDismissed: (DismissDirection direction) {
               if (direction == DismissDirection.endToStart) {
-                model.selectProduct(index);
+                model.selectProduct(model.products[index].id);
+                final String title = model.selectedProduct.title;
                 model.deleteProduct();
+                Scaffold.of(context).showSnackBar(SnackBar(
+                    content: Text("$title deleted.")));
               }
             },
             background: Container(

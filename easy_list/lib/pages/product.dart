@@ -8,9 +8,9 @@ import '../scoped_models/main.dart';
 import '../models/product.dart';
 
 class ProductPage extends StatelessWidget {
-  final int productIndex;
+  final Product product;
 
-  ProductPage(this.productIndex);
+  ProductPage(this.product);
 
   _showWarningDialog(BuildContext context) {
     return showDialog(
@@ -55,39 +55,42 @@ class ProductPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return WillPopScope(onWillPop: () {
-      Navigator.pop(context, false);
-      return Future.value(false); //ignore original pop request
-    }, child: ScopedModelDescendant<MainModel>(
-        builder: (BuildContext context, Widget child, MainModel model) {
-      final Product product = model.products[productIndex];
-      return Scaffold(
-        appBar: AppBar(
-          title: Text('Product Detail'),
-        ),
-        body: ListView(
-          padding: EdgeInsets.all(10.0),
-          children: <Widget>[
-            Image.network(product.image),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 0),
-              child: Text(
-                'Islamabad',
-                style: TextStyle(fontWeight: FontWeight.bold),
+    return WillPopScope(
+        onWillPop: () {
+          Navigator.pop(context, false);
+          return Future.value(false); //ignore original pop request
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text('Product Detail'),
+          ),
+          body: ListView(
+            padding: EdgeInsets.all(10.0),
+            children: <Widget>[
+              FadeInImage(
+                image: NetworkImage(product.image),
+                height: 300.0,
+                fit: BoxFit.cover,
+                placeholder: AssetImage('assets/food.jpg'),
               ),
-              alignment: Alignment.bottomRight,
-            ),
-            SizedBox(
-              height: 10.0,
-            ),
-            _buildTitlePriceRow(product.title, product.price),
-            SizedBox(
-              height: 10.0,
-            ),
-            Text(product.description),
-          ],
-        ),
-      );
-    }));
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 0),
+                child: Text(
+                  'Islamabad',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                alignment: Alignment.bottomRight,
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              _buildTitlePriceRow(product.title, product.price),
+              SizedBox(
+                height: 10.0,
+              ),
+              Text(product.description),
+            ],
+          ),
+        ));
   }
 }

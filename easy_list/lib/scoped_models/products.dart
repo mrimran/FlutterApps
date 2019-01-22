@@ -6,12 +6,11 @@ import '../models/product.dart';
 
 mixin ProductsModel on Model {
   List<Product> _products = [];
-  int _selectedProductIndex;
+  String _selectedProductId;
   bool _showFav = false;
   bool isLoading = false;
 
-  final productsEndpoint =
-      'https://flutter-easylist-35b62.firebaseio.com/';
+  final productsEndpoint = 'https://flutter-easylist-35b62.firebaseio.com/';
 
   List<Product> get products {
     //Making clone of original List so we make changes in clone not the original one.
@@ -31,51 +30,69 @@ mixin ProductsModel on Model {
   }
 
   Future saveProductOnServer(Map productData, {String productId = ''}) async {
-    if(productId.isEmpty) {
-      return await http.post(productsEndpoint + 'products.json', body: json.encode(productData));
+    if (productId.isEmpty) {
+      return await http.post(productsEndpoint + 'products.json',
+          body: json.encode(productData));
     } else {
-      print(productsEndpoint + '$productId.json');
-      return await http.put(productsEndpoint + 'products/$productId.json', body: json.encode(productData));
-    }
-  }
-
-  void updateProduct(Product product) {
-    _products[_selectedProductIndex] = product;
-  }
-
-  void deleteProduct() async {
-    final delProductId = this.selectedProduct.id;
-    _products.removeAt(_selectedProductIndex);
-    this._selectedProductIndex = null;
-
-    this.toggleIsLoading();
-    await http.delete(productsEndpoint + 'products/$delProductId.json');
-    this.toggleIsLoading();
-  }
-
-  void selectProduct(int index) {
-    _selectedProductIndex = index;
-
-    if (_selectedProductIndex != null) {
-      notifyListeners();
+      return await http.put(productsEndpoint + 'products/$productId.json',
+          body: json.encode(productData));
     }
   }
 
   int get selectedProductIndex {
-    return _selectedProductIndex;
+    return _products.indexWhere((Product product) {
+      return product.id == this.selectedProductId;
+    });
+  }
+
+  void updateProduct(Product product) {
+    _products[this.selectedProductIndex] = product;
+  }
+
+  Future<bool> deleteProduct() {
+    final deletedProductId = selectedProduct.id;
+    _products.removeAt(selectedProductIndex);
+    this._selectedProductId = null;
+    notifyListeners();
+    return http
+        .delete(productsEndpoint + 'products/$deletedProductId.json')
+        .then((http.Response response) {
+      this.isLoading = false;
+      notifyListeners();
+      return true;
+    }).catchError((error) {
+      this.isLoading = false;
+      notifyListeners();
+      return false;
+    });
+    //await http.delete(productsEndpoint + 'products/$deletedProductId.json');
+  }
+
+  void selectProduct(String productId) {
+    _selectedProductId = productId;
+
+    if (_selectedProductId != null) {
+      notifyListeners();
+    }
+  }
+
+  String get selectedProductId {
+    return _selectedProductId;
   }
 
   Product get selectedProduct {
-    if (_selectedProductIndex == null) {
+    if (_selectedProductId == null) {
       return null;
     }
 
-    return _products[_selectedProductIndex];
+    return _products.firstWhere((product) {
+      return product.id == this.selectedProductId;
+    });
   }
 
   void toggleProductFavorite() {
-    _products[_selectedProductIndex].isFavorite =
-        !_products[_selectedProductIndex].isFavorite;
+    _products[this.selectedProductIndex].isFavorite =
+        !_products[this.selectedProductIndex].isFavorite;
 
     notifyListeners(); //notify view to reload and update the change of the favt icon
   }
@@ -86,35 +103,42 @@ mixin ProductsModel on Model {
     notifyListeners();
   }
 
-  void fetchProducts() async {
+  Future fetchProducts() async {
     this.isLoading = true;
+    http.Response res;
+    try {
+      res = await http.get(productsEndpoint + 'products.json');
+      final Map<String, dynamic> productListData = json.decode(res.body);
+      final List<Product> fetchedProductList = [];
 
-    http.Response res = await http.get(productsEndpoint + 'products.json');
-    final Map<String, dynamic> productListData = json.decode(res.body);
-    final List<Product> fetchedProductList = [];
+      //print(resBody);
+      //add the product list on local codebase
 
-    //print(resBody);
-    //add the product list on local codebase
+      if (productListData != null) {
+        productListData.forEach((String productId, dynamic productData) {
+          final Product product = Product(
+              id: productId,
+              title: productData['title'],
+              description: productData['description'],
+              price: productData['price'],
+              image: productData['image'],
+              userId:
+                  productData['userId'] == null ? '' : productData['userId']);
 
-    if(productListData != null) {
-      productListData.forEach((String productId, dynamic productData) {
-        final Product product = Product(
-            id: productId,
-            title: productData['title'],
-            description: productData['description'],
-            price: productData['price'],
-            image: productData['image'],
-            userId: productData['userId'] == null ? '' : productData['userId']);
+          fetchedProductList.add(product);
+        });
+      }
 
-        fetchedProductList.add(product);
-      });
+      _products = fetchedProductList;
+    } catch (e) {
+      print(e.toString());
     }
-
-    _products = fetchedProductList;
 
     this.isLoading = false;
 
     notifyListeners();
+
+    return res;
   }
 
   bool get displayFavOnly {

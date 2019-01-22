@@ -8,6 +8,7 @@ import './pages/product.dart';
 import './pages/home.dart';
 import './pages/product_admin.dart';
 import './scoped_models/main.dart';
+import './models/product.dart';
 
 void main() {
   //debugPaintSizeEnabled = true;
@@ -26,7 +27,8 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     final model = MainModel();
     return ScopedModel<MainModel>(
-      model: model,//initiating only one instance of the ProductsModel in whole application
+      model: model,
+      //initiating only one instance of the ProductsModel in whole application
       child: MaterialApp(
         theme: ThemeData(
             primarySwatch: Colors.deepOrange,
@@ -36,7 +38,8 @@ class _MyAppState extends State<MyApp> {
         routes: {
           '/': (BuildContext context) => AuthPage(),
           '/home': (BuildContext context) => HomePage(model),
-          '/product_admin_page': (BuildContext context) => ProductAdminPage(model)
+          '/product_admin_page': (BuildContext context) =>
+              ProductAdminPage(model)
         },
         onGenerateRoute: (RouteSettings settings) {
           //on handle dynamic named routes like /product/:id
@@ -49,12 +52,15 @@ class _MyAppState extends State<MyApp> {
 
           if (pathElements[1] == 'product') {
             //if we are on product route
-            final int index =
-                int.parse(pathElements[2]); //to entertain path like /product/2
+            final String productId =
+                pathElements[2]; //to entertain path like /product/2
+
+            final Product product = model.products.firstWhere((Product product) {
+              return product.id == productId;
+            });
 
             return MaterialPageRoute<bool>(
-                builder: (BuildContext context) =>
-                    ProductPage(index));
+                builder: (BuildContext context) => ProductPage(product));
           }
 
           return null;

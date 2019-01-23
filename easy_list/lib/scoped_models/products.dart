@@ -54,7 +54,6 @@ mixin ProductsModel on Model {
     final deletedProductId = selectedProduct.id;
     _products.removeAt(selectedProductIndex);
     this._selectedProductId = null;
-    //notifyListeners();
     try {
       await http.delete(productsEndpoint + 'products/$deletedProductId.json?auth=${UserModel.loggedInUser.token}');
       this.isLoading = false;

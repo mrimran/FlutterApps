@@ -1,6 +1,7 @@
 import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/user.dart';
 import '../models/auth.dart';
@@ -54,9 +55,29 @@ mixin UserModel on Model {
     if (!hasError) {
       UserModel.loggedInUser = this._authUser =
           User(id: resBody['localId'], email: email, token: resBody['idToken']);
+
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      pref.setString('token', resBody['idToken']);
+      pref.setString('userEmail', email);
+      pref.setString('userId', resBody['localId']);
     }
 
     return {'success': !hasError, 'message': message};
+  }
+
+  void autoAuth() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    String token = pref.getString('token');
+
+    if (token != null) {
+      String userEmail = pref.getString('userEmail');
+      String userId = pref.getString('userId');
+
+      UserModel.loggedInUser =
+          this._authUser = User(id: userId, email: userEmail, token: token);
+
+      notifyListeners();
+    }
   }
 
   Map authPayload(String email, String password) {

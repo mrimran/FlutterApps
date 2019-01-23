@@ -27,9 +27,16 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final model = MainModel();
+
+  @override
+  void initState() {
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final model = MainModel();
     return ScopedModel<MainModel>(
       model: model,
       //initiating only one instance of the ProductsModel in whole application

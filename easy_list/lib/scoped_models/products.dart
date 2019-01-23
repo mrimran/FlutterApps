@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../models/product.dart';
+import '../scoped_models/user.dart';
 
 mixin ProductsModel on Model {
   List<Product> _products = [];
@@ -31,10 +32,10 @@ mixin ProductsModel on Model {
 
   Future saveProductOnServer(Map productData, {String productId = ''}) async {
     if (productId.isEmpty) {
-      return await http.post(productsEndpoint + 'products.json',
+      return await http.post(productsEndpoint + 'products.json?auth=${UserModel.loggedInUser.token}',
           body: json.encode(productData));
     } else {
-      return await http.put(productsEndpoint + 'products/$productId.json',
+      return await http.put(productsEndpoint + 'products/$productId.json?auth=${UserModel.loggedInUser.token}',
           body: json.encode(productData));
     }
   }
@@ -49,30 +50,22 @@ mixin ProductsModel on Model {
     _products[this.selectedProductIndex] = product;
   }
 
-  Future<bool> deleteProduct() async {
+  void deleteProduct() async {
     final deletedProductId = selectedProduct.id;
     _products.removeAt(selectedProductIndex);
     this._selectedProductId = null;
-    notifyListeners();
+    //notifyListeners();
     try {
-      await http.delete(productsEndpoint + 'products/$deletedProductId.json');
+      await http.delete(productsEndpoint + 'products/$deletedProductId.json?auth=${UserModel.loggedInUser.token}');
       this.isLoading = false;
-      notifyListeners();
-      return true;
     } catch (e) {
       print(e.toString());
       this.isLoading = false;
-      notifyListeners();
-      return true;
     }
   }
 
   void selectProduct(String productId) {
     _selectedProductId = productId;
-
-    if (_selectedProductId != null) {
-      notifyListeners();
-    }
   }
 
   String get selectedProductId {
@@ -106,7 +99,7 @@ mixin ProductsModel on Model {
     this.isLoading = true;
     http.Response res;
     try {
-      res = await http.get(productsEndpoint + 'products.json');
+      res = await http.get(productsEndpoint + 'products.json?auth=${UserModel.loggedInUser.token}');
       final Map<String, dynamic> productListData = json.decode(res.body);
       final List<Product> fetchedProductList = [];
 

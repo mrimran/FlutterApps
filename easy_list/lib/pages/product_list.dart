@@ -48,6 +48,7 @@ class ProductListPageState extends State<ProductListPage> {
                 model.selectProduct(model.products[index].id);
                 final String title = model.selectedProduct.title;
                 model.deleteProduct();
+
                 Scaffold.of(context).showSnackBar(SnackBar(
                     content: Text("$title deleted.")));
               }

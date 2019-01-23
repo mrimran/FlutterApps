@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import '../scoped_models/main.dart';
-
-enum AuthMode { Signup, Login }
+import '../models/auth.dart';
 
 class AuthPage extends StatefulWidget {
   @override
@@ -84,14 +83,9 @@ class AuthPageState extends State<AuthPage> {
 
     formKey.currentState.save();
 
-    Map resInfo;
     model.toggleIsLoading();
-    if (_authMode == AuthMode.Login) {
-      resInfo = await model.login(formData['email'], formData['password']);
-    } else {
-      final Map resInfo =
-          await model.signup(formData['email'], formData['password']);
-    }
+    Map resInfo =
+        await model.auth(formData['email'], formData['password'], _authMode);
     model.toggleIsLoading();
 
     if (resInfo['success']) {

@@ -12,7 +12,11 @@ import './models/product.dart';
 
 void main() {
   //debugPaintSizeEnabled = true;
-  runApp(MyApp());
+  try {
+    runApp(MyApp());
+  } catch (e) {
+    print(e.toString());
+  }
 }
 
 class MyApp extends StatefulWidget {
@@ -55,7 +59,8 @@ class _MyAppState extends State<MyApp> {
             final String productId =
                 pathElements[2]; //to entertain path like /product/2
 
-            final Product product = model.products.firstWhere((Product product) {
+            final Product product =
+                model.products.firstWhere((Product product) {
               return product.id == productId;
             });
 

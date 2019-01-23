@@ -49,23 +49,22 @@ mixin ProductsModel on Model {
     _products[this.selectedProductIndex] = product;
   }
 
-  Future<bool> deleteProduct() {
+  Future<bool> deleteProduct() async {
     final deletedProductId = selectedProduct.id;
     _products.removeAt(selectedProductIndex);
     this._selectedProductId = null;
     notifyListeners();
-    return http
-        .delete(productsEndpoint + 'products/$deletedProductId.json')
-        .then((http.Response response) {
+    try {
+      await http.delete(productsEndpoint + 'products/$deletedProductId.json');
       this.isLoading = false;
       notifyListeners();
       return true;
-    }).catchError((error) {
+    } catch (e) {
+      print(e.toString());
       this.isLoading = false;
       notifyListeners();
-      return false;
-    });
-    //await http.delete(productsEndpoint + 'products/$deletedProductId.json');
+      return true;
+    }
   }
 
   void selectProduct(String productId) {

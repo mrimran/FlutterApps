@@ -32,10 +32,14 @@ mixin ProductsModel on Model {
 
   Future saveProductOnServer(Map productData, {String productId = ''}) async {
     if (productId.isEmpty) {
-      return await http.post(productsEndpoint + 'products.json?auth=${UserModel.loggedInUser.token}',
+      return await http.post(
+          productsEndpoint +
+              'products.json?auth=${UserModel.loggedInUser.token}',
           body: json.encode(productData));
     } else {
-      return await http.put(productsEndpoint + 'products/$productId.json?auth=${UserModel.loggedInUser.token}',
+      return await http.put(
+          productsEndpoint +
+              'products/$productId.json?auth=${UserModel.loggedInUser.token}',
           body: json.encode(productData));
     }
   }
@@ -55,7 +59,8 @@ mixin ProductsModel on Model {
     _products.removeAt(selectedProductIndex);
     this._selectedProductId = null;
     try {
-      await http.delete(productsEndpoint + 'products/$deletedProductId.json?auth=${UserModel.loggedInUser.token}');
+      await http.delete(productsEndpoint +
+          'products/$deletedProductId.json?auth=${UserModel.loggedInUser.token}');
       this.isLoading = false;
     } catch (e) {
       print(e.toString());
@@ -81,10 +86,29 @@ mixin ProductsModel on Model {
     });
   }
 
-  void toggleProductFavorite() {
-    _products[this.selectedProductIndex].isFavorite =
-        !_products[this.selectedProductIndex].isFavorite;
+  void toggleProductFavorite() async {
+    final newFavStatus = !_products[this.selectedProductIndex].isFavorite;
+    _products[this.selectedProductIndex].isFavorite = newFavStatus;
+    try {
+      http.Response res;
+      if (newFavStatus) {
+        res = await http.put(
+            productsEndpoint +
+                'products/${this.selectedProduct.id}/wishlistUsers/${UserModel.loggedInUser.id}.json?auth=${UserModel.loggedInUser.token}',
+            body: json.encode(true));
+      } else {
+        res = await http.delete(productsEndpoint +
+            'products/${this.selectedProduct.id}/wishlistUsers/${UserModel.loggedInUser.id}.json?auth=${UserModel.loggedInUser.token}');
+      }
 
+      if (res.statusCode != 200 && res.statusCode != 201) {
+        _products[this.selectedProductIndex].isFavorite = !newFavStatus;
+      }
+    } catch (e) {
+      print("toggleProductFavorite: " + e.toString());
+      //the request failed to toggle back the local update
+      _products[this.selectedProductIndex].isFavorite = !newFavStatus;
+    }
     notifyListeners(); //notify view to reload and update the change of the favt icon
   }
 
@@ -98,7 +122,8 @@ mixin ProductsModel on Model {
     this.isLoading = true;
     http.Response res;
     try {
-      res = await http.get(productsEndpoint + 'products.json?auth=${UserModel.loggedInUser.token}');
+      res = await http.get(productsEndpoint +
+          'products.json?auth=${UserModel.loggedInUser.token}');
       final Map<String, dynamic> productListData = json.decode(res.body);
       final List<Product> fetchedProductList = [];
 
@@ -114,7 +139,11 @@ mixin ProductsModel on Model {
               price: productData['price'],
               image: productData['image'],
               userId:
-                  productData['userId'] == null ? '' : productData['userId']);
+                  productData['userId'] == null ? '' : productData['userId'],
+              isFavorite: productData['wishlistUsers'] != null
+                  ? (productData['wishlistUsers'] as Map<String, dynamic>)
+                      .containsKey(UserModel.loggedInUser.id)
+                  : false);
 
           fetchedProductList.add(product);
         });

@@ -146,7 +146,7 @@ mixin UserModel on Model {
   }
 
   void setAuthTimeout(int time) {
-    authTimer = Timer(Duration(milliseconds: time * 5), () {
+    authTimer = Timer(Duration(seconds: time), () {
       this.logout();
     });
   }

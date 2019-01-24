@@ -21,7 +21,6 @@
 
         <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyDp2Ed2RgWYzpfut750mb8DITmyo0afw9g"/>
         <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version"/>
-        <activity android:name="com.apptreesoftware.mapview.MapActivity" android:theme="@style/Theme.AppCompat.Light.DarkActionBar"/>
 
         <activity
             android:name=".MainActivity"
@@ -42,5 +41,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name="com.apptreesoftware.mapview.MapActivity" android:theme="@style/Theme.AppCompat.Light.DarkActionBar"/>
     </application>
 </manifest>

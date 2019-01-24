@@ -31,7 +31,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-
+    model.autoAuth();//auto login
     super.initState();
   }
 
@@ -47,7 +47,15 @@ class _MyAppState extends State<MyApp> {
             buttonColor: Colors.deepPurple),
         //home: AuthPage(),
         routes: {
-          '/': (BuildContext context) => AuthPage(),
+          '/': (BuildContext context) => ScopedModelDescendant(
+                builder:
+                    (BuildContext context, Widget child, MainModel mainModel) {
+                  //this portion will be called again with updated model instance on notify listeners
+                  return mainModel.authUser == null//check if the user is already auto logged in
+                      ? AuthPage()
+                      : HomePage(model);
+                },
+              ),
           '/home': (BuildContext context) => HomePage(model),
           '/product_admin_page': (BuildContext context) =>
               ProductAdminPage(model)

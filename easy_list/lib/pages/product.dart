@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../widgets/products/price_tag.dart';
-import 'package:easy_list/ui_elements/title_default.dart';
+import 'package:easy_list/widgets/ui_elements/title_default.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import '../scoped_models/main.dart';

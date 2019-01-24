@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import './product_edit.dart';
 import './product_list.dart';
 import '../scoped_models/main.dart';
-import '../ui_elements/logout_list_tile.dart';
+import '../widgets/ui_elements/logout_list_tile.dart';
 
 class ProductAdminPage extends StatelessWidget {
   final MainModel model;

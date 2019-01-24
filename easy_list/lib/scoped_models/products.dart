@@ -77,7 +77,7 @@ mixin ProductsModel on Model {
   }
 
   Product get selectedProduct {
-    if (_selectedProductId == null) {
+    if (_selectedProductId == null || _products.length <= 0) {
       return null;
     }
 
@@ -109,6 +109,7 @@ mixin ProductsModel on Model {
       //the request failed to toggle back the local update
       _products[this.selectedProductIndex].isFavorite = !newFavStatus;
     }
+    this._selectedProductId = null;
     notifyListeners(); //notify view to reload and update the change of the favt icon
   }
 
@@ -118,7 +119,7 @@ mixin ProductsModel on Model {
     notifyListeners();
   }
 
-  Future fetchProducts() async {
+  Future fetchProducts({onlyForUser = false}) async {
     this.isLoading = true;
     http.Response res;
     try {
@@ -145,7 +146,13 @@ mixin ProductsModel on Model {
                       .containsKey(UserModel.loggedInUser.id)
                   : false);
 
-          fetchedProductList.add(product);
+          if(onlyForUser) {
+            if(UserModel.loggedInUser.id == product.userId) {
+              fetchedProductList.add(product);
+            }
+          } else {
+            fetchedProductList.add(product);
+          }
         });
       }
 

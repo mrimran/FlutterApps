@@ -12,11 +12,7 @@ import './models/product.dart';
 
 void main() {
   //debugPaintSizeEnabled = true;
-  try {
-    runApp(MyApp());
-  } catch (e) {
-    print(e.toString());
-  }
+  runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
@@ -28,15 +24,22 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final model = MainModel();
+  bool isAuth = false;
 
   @override
   void initState() {
-    model.autoAuth();//auto login
+    model.autoAuth(); //auto login
+    model.userSubject.listen((bool isAuth) {
+      setState(() {
+        this.isAuth = isAuth;
+      });
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    print('building main page....');
     return ScopedModel<MainModel>(
       model: model,
       //initiating only one instance of the ProductsModel in whole application
@@ -47,20 +50,15 @@ class _MyAppState extends State<MyApp> {
             buttonColor: Colors.deepPurple),
         //home: AuthPage(),
         routes: {
-          '/': (BuildContext context) => ScopedModelDescendant(
-                builder:
-                    (BuildContext context, Widget child, MainModel mainModel) {
-                  //this portion will be called again with updated model instance on notify listeners
-                  return mainModel.authUser == null//check if the user is already auto logged in
-                      ? AuthPage()
-                      : HomePage(model);
-                },
-              ),
-          '/home': (BuildContext context) => HomePage(model),
+          '/': (BuildContext context) => !isAuth ? AuthPage() : HomePage(model),
           '/product_admin_page': (BuildContext context) =>
-              ProductAdminPage(model)
+              !isAuth ? AuthPage() : ProductAdminPage(model)
         },
         onGenerateRoute: (RouteSettings settings) {
+          if (!isAuth) {
+            return MaterialPageRoute<bool>(
+                builder: (BuildContext context) => AuthPage());
+          }
           //on handle dynamic named routes like /product/:id
           final List<String> pathElements = settings.name.split('/');
 
@@ -80,7 +78,8 @@ class _MyAppState extends State<MyApp> {
             });
 
             return MaterialPageRoute<bool>(
-                builder: (BuildContext context) => ProductPage(product));
+                builder: (BuildContext context) =>
+                    !isAuth ? AuthPage() : ProductPage(product));
           }
 
           return null;
@@ -88,7 +87,8 @@ class _MyAppState extends State<MyApp> {
         onUnknownRoute: (RouteSettings settings) {
           //When onGenerateRoute even fails, so this can be used to through 404 or maybe get back user to home page.
           return MaterialPageRoute(
-              builder: (BuildContext context) => HomePage(model));
+              builder: (BuildContext context) =>
+                  !isAuth ? AuthPage() : HomePage(model));
         },
       ),
     );

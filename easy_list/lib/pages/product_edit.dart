@@ -137,7 +137,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
       return;
     }
 
-    Navigator.pushReplacementNamed(context, '/home')
+    Navigator.pushReplacementNamed(context, '/')
         .then((val) => model.selectProduct(null));
   }
 

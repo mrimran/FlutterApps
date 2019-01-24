@@ -89,7 +89,7 @@ class AuthPageState extends State<AuthPage> {
     model.toggleIsLoading();
 
     if (resInfo['success']) {
-      Navigator.pushReplacementNamed(context, '/home');
+      //Navigator.pushReplacementNamed(context, '/');
     } else {
       showDialog(
           context: context,

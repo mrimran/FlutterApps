@@ -6,6 +6,7 @@ import 'package:easy_list/widgets/form_inputs/location.dart';
 
 import '../models/product.dart';
 import '../scoped_models/main.dart';
+import '../models/location_data.dart';
 
 class ProductEditPage extends StatefulWidget {
   @override
@@ -18,11 +19,15 @@ class _ProductEditPageState extends State<ProductEditPage> {
   String titleValue = '';
   String descriptionValue = '';
   double priceValue = 0.0;
+  LocationData location;
   final Map formData = {
     'title': null,
     'description': null,
     'price': null,
-    'image': "https://kuulpeeps.com/wp-content/uploads/2018/10/chocolate.gif"
+    'image': "https://kuulpeeps.com/wp-content/uploads/2018/10/chocolate.gif",
+    'lat': null,
+    'lng': null,
+    'address': null
   };
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -74,6 +79,13 @@ class _ProductEditPageState extends State<ProductEditPage> {
     );
   }
 
+  void _setLocation(LocationData locationData) {
+    this.location = locationData;
+    formData['lat'] = locationData.lat;
+    formData['lng'] = locationData.lng;
+    formData['address'] = locationData.address;
+  }
+
   //model.addProduct, model.updateProduct, model.selectedProductIndex
   //Function addProduct, Function updateProduct, [int selectedProductIndex]
   void _submitForm(MainModel model) async {
@@ -107,7 +119,9 @@ class _ProductEditPageState extends State<ProductEditPage> {
           description: formData['description'],
           price: formData['price'],
           image: formData['image'],
-          userId: model.authUser.id);
+          location: this.location,
+          userId: model.authUser.id
+      );
 
       if (model.selectedProductId == null) {
         model.addProduct(productData);
@@ -178,7 +192,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
                     _buildDescriptionTextField(product),
                     _buildPriceTextField(product),
                     SizedBox(height: 10.0),
-                    LocationInput(),
+                    LocationInput(_setLocation),
                     SizedBox(
                       height: 10.0,
                     ),

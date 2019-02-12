@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import './user.dart';
+import './location_data.dart';
 
 class Product {
   final String id;
@@ -10,6 +11,7 @@ class Product {
   final String image;
   bool isFavorite;
   String userId;
+  LocationData location;
 
   Product(
       {@required this.id,
@@ -18,7 +20,8 @@ class Product {
       @required this.price,
       @required this.image,
       this.isFavorite = false,
-      this.userId});
+      this.userId,
+      this.location});
 
   Map get toMap {
     return {

@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import '../models/product.dart';
 import '../scoped_models/user.dart';
+import '../models/location_data.dart';
 
 mixin ProductsModel on Model {
   List<Product> _products = [];
@@ -133,12 +134,18 @@ mixin ProductsModel on Model {
 
       if (productListData != null) {
         productListData.forEach((String productId, dynamic productData) {
+          final LocationData location = LocationData(
+              lat: productData['lat'],
+              lng: productData['lng'],
+              address: productData['address']);
+
           final Product product = Product(
               id: productId,
               title: productData['title'],
               description: productData['description'],
               price: productData['price'],
               image: productData['image'],
+              location: location,
               userId:
                   productData['userId'] == null ? '' : productData['userId'],
               isFavorite: productData['wishlistUsers'] != null
@@ -146,8 +153,8 @@ mixin ProductsModel on Model {
                       .containsKey(UserModel.loggedInUser.id)
                   : false);
 
-          if(onlyForUser) {
-            if(UserModel.loggedInUser.id == product.userId) {
+          if (onlyForUser) {
+            if (UserModel.loggedInUser.id == product.userId) {
               fetchedProductList.add(product);
             }
           } else {

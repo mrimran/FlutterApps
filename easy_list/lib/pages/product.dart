@@ -76,7 +76,7 @@ class ProductPage extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 0),
                 child: Text(
-                  'Islamabad',
+                  product.location.address,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 alignment: Alignment.bottomRight,

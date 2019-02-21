@@ -24,11 +24,13 @@ dependencies:
   shared_preferences: ^0.4.3
   rxdart: ^0.20.0
   location: ^2.0.0
-  google_maps_flutter: ^0.2.0+2
+  google_maps_flutter: ^0.2.0+3
+  image_picker: ^0.5.0+3
 
-  #map_view:
-  #    git:
-  #      url: git://github.com/maxschwarzmueller/flutter_google_map_view
+  map_view:
+      git:
+        url: git://github.com/Eimji/flutter_google_map_view.git
+#        url: git://github.com/maxschwarzmueller/flutter_google_map_view
 
 dev_dependencies:
   flutter_test:

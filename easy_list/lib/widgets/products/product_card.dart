@@ -70,7 +70,7 @@ class ProductCard extends StatelessWidget {
             height: 10.0,
           ),
           _buildTitlePriceRow(),
-          AddressTag('Islamabad'),
+          AddressTag(product.location.address),
           Text(product.userId != null ? product.userId : ''),
           _buildActionButtons(context)
         ],

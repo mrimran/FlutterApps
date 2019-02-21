@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-//import 'package:map_view/map_view.dart';
+import 'package:map_view/map_view.dart';
 import 'dart:convert'; //JSON to dart maps
 
 import 'package:http/http.dart' as http;
 import 'package:location/location.dart' as geoloc;
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+//import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../models/location_data.dart';
 import '../../models/product.dart';
@@ -23,7 +23,7 @@ class LocationInput extends StatefulWidget {
 }
 
 class LocationInputState extends State<LocationInput> {
-  GoogleMapController mapController;
+  //GoogleMapController mapController;
   final FocusNode _addressInput = FocusNode();
   Uri _staticMapUri;
   final TextEditingController _addressInputController = TextEditingController();
@@ -76,22 +76,22 @@ class LocationInputState extends State<LocationInput> {
       _locationData = LocationData(address: address, lat: lat, lng: lng);
     }
 
-    /*final StaticMapProvider staticMapProvider =
+    final StaticMapProvider staticMapProvider =
         StaticMapProvider('AIzaSyDp2Ed2RgWYzpfut750mb8DITmyo0afw9g');
     final Uri staticMapUri = staticMapProvider.getStaticUriWithMarkers(
         [Marker('position', 'Position', _locationData.lat, _locationData.lng)],
         center: Location(_locationData.lat, _locationData.lng),
         width: 500,
         height: 300,
-        maptype: StaticMapViewType.roadmap);*/
+        maptype: StaticMapViewType.roadmap);
 
     //_goToUserLocationOnGoogleMap(LocationData(lat: _locationData.lat, lng: _locationData.lng, address: address));
 
     widget.setLocation(_locationData);
     setState(() {
       _addressInputController.text = _locationData.address;
-      //this._staticMapUri = staticMapUri;
-      this._staticMapUri = null;
+      this._staticMapUri = staticMapUri;
+      //this._staticMapUri = null;
     });
   }
 
@@ -125,7 +125,7 @@ class LocationInputState extends State<LocationInput> {
     return decodedRes['results'][0]['formatted_address'];
   }
 
-  void _onMapCreated(GoogleMapController controller) {
+  /*void _onMapCreated(GoogleMapController controller) {
     setState(() {
       mapController = controller;
     });
@@ -141,7 +141,7 @@ class LocationInputState extends State<LocationInput> {
         zoom: 16.0,
       ),
     ));
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {

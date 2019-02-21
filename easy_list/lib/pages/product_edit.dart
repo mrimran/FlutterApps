@@ -7,6 +7,7 @@ import 'package:easy_list/widgets/form_inputs/location.dart';
 import '../models/product.dart';
 import '../scoped_models/main.dart';
 import '../models/location_data.dart';
+import '../widgets/form_inputs/image.dart';
 
 class ProductEditPage extends StatefulWidget {
   @override
@@ -196,6 +197,8 @@ class _ProductEditPageState extends State<ProductEditPage> {
                     SizedBox(
                       height: 10.0,
                     ),
+                    ImageInput(),
+                    SizedBox(height: 10.0),
                     _buildSubmitButton(model)
                   ],
                 ))));

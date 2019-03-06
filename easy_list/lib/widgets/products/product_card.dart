@@ -6,6 +6,7 @@ import 'package:easy_list/widgets/ui_elements/title_default.dart';
 import './address_tag.dart';
 import '../../models/product.dart';
 import '../../scoped_models/main.dart';
+import '../../models/location_data.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -70,7 +71,11 @@ class ProductCard extends StatelessWidget {
             height: 10.0,
           ),
           _buildTitlePriceRow(),
-          AddressTag(product.location.address),
+          AddressTag(
+            product.location.address,
+            location: LocationData(
+                lat: product.location.lat, lng: product.location.lng),
+          ),
           Text(product.userId != null ? product.userId : ''),
           _buildActionButtons(context)
         ],

@@ -1,11 +1,12 @@
 import 'dart:async';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import '../widgets/products/price_tag.dart';
 import 'package:easy_list/widgets/ui_elements/title_default.dart';
-import 'package:scoped_model/scoped_model.dart';
 
-import '../scoped_models/main.dart';
 import '../models/product.dart';
+import '../widgets/products/address_tag.dart';
+import '../models/location_data.dart';
 
 class ProductPage extends StatelessWidget {
   final Product product;
@@ -73,13 +74,13 @@ class ProductPage extends StatelessWidget {
                 fit: BoxFit.cover,
                 placeholder: AssetImage('assets/food.jpg'),
               ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 0),
-                child: Text(
-                  product.location.address,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                alignment: Alignment.bottomRight,
+              SizedBox(
+                height: 5.0,
+              ),
+              AddressTag(
+                product.location.address,
+                location: LocationData(
+                    lat: product.location.lat, lng: product.location.lng),
               ),
               SizedBox(
                 height: 10.0,

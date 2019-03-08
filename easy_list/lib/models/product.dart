@@ -9,6 +9,7 @@ class Product {
   final String description;
   final double price;
   final String image;
+  final String imagePath;
   bool isFavorite;
   String userId;
   LocationData location;
@@ -19,6 +20,7 @@ class Product {
       @required this.description,
       @required this.price,
       @required this.image,
+      this.imagePath,
       this.isFavorite = false,
       this.userId,
       this.location});
@@ -30,6 +32,7 @@ class Product {
       'description': description,
       'price': price,
       'image': image,
+      'imagePath': imagePath,
       'isFavorite': isFavorite,
       'userId': userId
     };

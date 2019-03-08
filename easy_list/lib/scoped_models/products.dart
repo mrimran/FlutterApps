@@ -1,6 +1,10 @@
 import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:io';
+
+import 'package:mime/mime.dart';
+import 'package:http_parser/http_parser.dart';
 
 import '../models/product.dart';
 import '../scoped_models/user.dart';
@@ -29,6 +33,42 @@ mixin ProductsModel on Model {
 
   void addProduct(Product product) {
     _products.add(product);
+  }
+
+  Future uploadImageOnServer(File image, {String imagePath}) async {
+    final mimeTypeData =
+        lookupMimeType(image.path).split('/'); //info will be like image/jpg
+    final imageUploadRequest = http.MultipartRequest(
+        'POST',
+        Uri.parse(
+            'https://us-central1-flutter-easylist-35b62.cloudfunctions.net/storeImage'));
+
+    final file = await http.MultipartFile.fromPath('image', image.path, contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
+    
+    imageUploadRequest.files.add(file);
+
+    if(imagePath != null) {//updating an existing product image
+      imageUploadRequest.fields['imagePath'] = Uri.encodeComponent(imagePath);//name doesn't matter here as in server code we kept our code generic
+    }
+
+    imageUploadRequest.headers['Authorization'] = 'Bearer ${UserModel.loggedInUser.token}';
+
+    try {
+      final stremedRes = await imageUploadRequest.send();
+      final res = await http.Response.fromStream(stremedRes);
+
+      if(res.statusCode != 200 && res.statusCode != 201) {
+        print('Something went wrong.');
+        print(json.decode(res.body));
+
+        return null;
+      }
+      return json.decode(res.body);
+    } catch (error) {
+      print(error);
+
+      return null;
+    }
   }
 
   Future saveProductOnServer(Map productData, {String productId = ''}) async {
@@ -145,6 +185,7 @@ mixin ProductsModel on Model {
               description: productData['description'],
               price: productData['price'],
               image: productData['image'],
+              imagePath: productData['imagePath'],
               location: location,
               userId:
                   productData['userId'] == null ? '' : productData['userId'],

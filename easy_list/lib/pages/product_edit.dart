@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
@@ -25,16 +26,22 @@ class _ProductEditPageState extends State<ProductEditPage> {
     'title': null,
     'description': null,
     'price': null,
-    'image': "https://kuulpeeps.com/wp-content/uploads/2018/10/chocolate.gif",
+    'image': null,
     'lat': null,
     'lng': null,
     'address': null
   };
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final _titleTextController = TextEditingController();//introduced to make sure that value remain stored even if field is scrolled out of viewport
+  final _descriptionTextController = TextEditingController();
+  final _priceTextController = TextEditingController();
 
   Widget _buildTitleTextField(Product product) {
+    final titleText = _titleTextController.text.trim();
+    setControllerTextInitialValue(product, titleText, _titleTextController);
+
     return TextFormField(
-      initialValue: product == null ? '' : product.title,
+      controller: _titleTextController,
       validator: (String value) {
         if (value.isEmpty || value.length < 5) {
           return 'Title is required and should be 5+ characters long.';
@@ -47,9 +54,24 @@ class _ProductEditPageState extends State<ProductEditPage> {
     );
   }
 
+  void setControllerTextInitialValue(Product product, String text, TextEditingController controller) {
+    if(product == null && text == '') {
+      controller.text = '';
+    } else if(product !=null && text == '') {
+      controller.text = product.title;
+    } else if(text != '') {
+      controller.text = text;
+    } else {
+      controller.text = '';
+    }
+  }
+
   Widget _buildDescriptionTextField(Product product) {
+    final descText = _descriptionTextController.text.trim();
+    setControllerTextInitialValue(product, descText, _descriptionTextController);
+
     return TextFormField(
-      initialValue: product == null ? '' : product.description,
+      controller: _descriptionTextController,
       maxLines: 3,
       validator: (String value) {
         if (value.isEmpty || value.length < 10) {
@@ -64,8 +86,11 @@ class _ProductEditPageState extends State<ProductEditPage> {
   }
 
   Widget _buildPriceTextField(Product product) {
+    final priceText = _priceTextController.text.trim();
+    setControllerTextInitialValue(product, priceText, _priceTextController);
+
     return TextFormField(
-      initialValue: product == null ? '' : product.price.toString(),
+      controller: _priceTextController,
       keyboardType: TextInputType.number,
       validator: (String value) {
         if (value.isEmpty ||
@@ -87,11 +112,16 @@ class _ProductEditPageState extends State<ProductEditPage> {
     formData['address'] = locationData.address;
   }
 
+  void _setImage(File image) {
+    formData['image'] = image;
+  }
+
   //model.addProduct, model.updateProduct, model.selectedProductIndex
   //Function addProduct, Function updateProduct, [int selectedProductIndex]
   void _submitForm(MainModel model) async {
     //print(formData);return;
-    if (!formKey.currentState.validate()) {
+    if (!formKey.currentState.validate() ||
+        (formData['image'] == null && model.selectedProductIndex == -1)) {//allow null image while editing existing product but not adding new product, -1 means adding new product
       return;
     }
 
@@ -108,6 +138,20 @@ class _ProductEditPageState extends State<ProductEditPage> {
     http.Response res;
 
     try {
+      final uploadData = await model.uploadImageOnServer(formData['image']);
+
+      if(uploadData == null) {
+        print('Upload failed.');
+      }
+
+      //formData['image'] is binary so replace it with actual uploadData image url
+      formData['image'] = uploadData['imageUrl'];
+      formData['imagePath'] = uploadData['imagePath'];
+
+      formData['title'] = _titleTextController.text;
+      formData['description'] = _descriptionTextController.text;
+      formData['price'] = double.parse(_priceTextController.text);
+
       res = await model.saveProductOnServer(formData, productId: productId);
 
       final Map responseData = json.decode(res.body);
@@ -120,6 +164,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
           description: formData['description'],
           price: formData['price'],
           image: formData['image'],
+          imagePath: formData['imagePath'],
           location: this.location,
           userId: model.authUser.id
       );
@@ -197,7 +242,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
                     SizedBox(
                       height: 10.0,
                     ),
-                    ImageInput(),
+                    ImageInput(_setImage, product),
                     SizedBox(height: 10.0),
                     _buildSubmitButton(model)
                   ],

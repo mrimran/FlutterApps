@@ -3,7 +3,14 @@ import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
 
+import '../../models/product.dart';
+
 class ImageInput extends StatefulWidget {
+  final Function setImage;
+  final Product product;
+
+  ImageInput(this.setImage, this.product);
+
   @override
   State<StatefulWidget> createState() {
     return ImageInputState();
@@ -15,7 +22,12 @@ class ImageInputState extends State<ImageInput> {
 
   void _getImage(BuildContext context, ImageSource source) async {
     File image = await ImagePicker.pickImage(source: source, maxWidth: 400.0);
+    setState(() {
+      //to update the UI when image is chosen
+      _imageFile = image;
+    });
 
+    widget.setImage(image);
     Navigator.pop(context); //close the modal
   }
 
@@ -82,7 +94,19 @@ class ImageInputState extends State<ImageInput> {
               )
             ],
           ),
-        )
+        ),
+        SizedBox(
+          height: 10.0,
+        ),
+        _imageFile == null
+            ? Text('Please pick an image.')
+            : Image.file(
+                _imageFile,
+                fit: BoxFit.cover,
+                height: 300.0,
+                width: MediaQuery.of(context).size.width,
+                alignment: Alignment.topCenter,
+              )
       ],
     );
   }

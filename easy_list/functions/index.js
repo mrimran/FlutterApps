@@ -40,7 +40,7 @@ exports.storeImage = functions.https.onRequest((req, res) => {
         let oldImagePath;
 
         busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-            const filePath = path.join(os.tmpDir(), filename);
+            const filePath = path.join(os.tmpdir(), filename);
 
             uploadData = { filePath: filePath, type: mimetype, name: filename };
 
@@ -77,7 +77,7 @@ exports.storeImage = functions.https.onRequest((req, res) => {
                     imagePath: imagePath
                 });
             }).catch(error => {
-                return res.satus(401).json({ error: 'Unauthorized.' });
+                return res.status(401).json({ error: 'Unauthorized.' });
             });
         });
 

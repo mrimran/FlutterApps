@@ -83,18 +83,11 @@ class LocationInputState extends State<LocationInput> {
       final coords = decodedRes['results'][0]['geometry']['location'];
       _locationData = LocationData(
           address: formattedAddr, lat: coords['lat'], lng: coords['lng']);
-
-      _goToUserLocationOnGoogleMap(_locationData);
     } else if (lat == null && lng == null) {
       _locationData = widget.product.location;
     } else {
       _locationData = LocationData(address: address, lat: lat, lng: lng);
     }
-
-    print('Yoooo');
-    print(_locationData.address);
-    print(_locationData.lat);
-    print(_locationData.lng);
 
     /*final StaticMapProvider staticMapProvider =
         StaticMapProvider('AIzaSyDp2Ed2RgWYzpfut750mb8DITmyo0afw9g');
@@ -104,6 +97,8 @@ class LocationInputState extends State<LocationInput> {
         width: 500,
         height: 300,
         maptype: StaticMapViewType.roadmap);*/
+
+    _goToUserLocationOnGoogleMap(_locationData);
 
     widget.setLocation(_locationData);
     setState(() {

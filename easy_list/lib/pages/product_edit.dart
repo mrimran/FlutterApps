@@ -32,7 +32,8 @@ class _ProductEditPageState extends State<ProductEditPage> {
     'address': null
   };
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  final _titleTextController = TextEditingController();//introduced to make sure that value remain stored even if field is scrolled out of viewport
+  final _titleTextController =
+      TextEditingController(); //introduced to make sure that value remain stored even if field is scrolled out of viewport
   final _descriptionTextController = TextEditingController();
   final _priceTextController = TextEditingController();
 
@@ -40,7 +41,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
     final titleText = _titleTextController.text.trim();
     setControllerTextInitialValue(product, titleText, _titleTextController);
 
-    if(_titleTextController.text.isEmpty && product != null) {
+    if (_titleTextController.text.isEmpty && product != null) {
       _titleTextController.text = product.title;
     }
 
@@ -58,10 +59,11 @@ class _ProductEditPageState extends State<ProductEditPage> {
     );
   }
 
-  void setControllerTextInitialValue(Product product, String text, TextEditingController controller) {
-    if(product == null && text == '') {
+  void setControllerTextInitialValue(
+      Product product, String text, TextEditingController controller) {
+    if (product == null && text == '') {
       controller.text = '';
-    } else if(text != '') {
+    } else if (text != '') {
       controller.text = text;
     } else {
       controller.text = '';
@@ -70,9 +72,10 @@ class _ProductEditPageState extends State<ProductEditPage> {
 
   Widget _buildDescriptionTextField(Product product) {
     final descText = _descriptionTextController.text.trim();
-    setControllerTextInitialValue(product, descText, _descriptionTextController);
+    setControllerTextInitialValue(
+        product, descText, _descriptionTextController);
 
-    if(_descriptionTextController.text.isEmpty && product != null) {
+    if (_descriptionTextController.text.isEmpty && product != null) {
       _descriptionTextController.text = product.description;
     }
 
@@ -95,7 +98,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
     final priceText = _priceTextController.text.trim();
     setControllerTextInitialValue(product, priceText, _priceTextController);
 
-    if(_priceTextController.text.isEmpty && product != null) {
+    if (_priceTextController.text.isEmpty && product != null) {
       _priceTextController.text = product.price.toString();
     }
 
@@ -131,7 +134,8 @@ class _ProductEditPageState extends State<ProductEditPage> {
   void _submitForm(MainModel model) async {
     //print(formData);return;
     if (!formKey.currentState.validate() ||
-        (formData['image'] == null && model.selectedProductIndex == -1)) {//allow null image while editing existing product but not adding new product, -1 means adding new product
+        (formData['image'] == null && model.selectedProductIndex == -1)) {
+      //allow null image while editing existing product but not adding new product, -1 means adding new product
       return;
     }
 
@@ -148,15 +152,21 @@ class _ProductEditPageState extends State<ProductEditPage> {
     http.Response res;
 
     try {
-      final uploadData = await model.uploadImageOnServer(formData['image']);
+      if (formData['image'] != null) {
+        final uploadData = await model.uploadImageOnServer(formData['image']);
 
-      if(uploadData == null) {
-        print('Upload failed.');
+        if (uploadData == null) {
+          print('Upload failed.');
+        }
+
+        //formData['image'] is binary so replace it with actual uploadData image url
+        formData['image'] = uploadData['imageUrl'];
+        formData['imagePath'] = uploadData['imagePath'];
+      } else {
+        //in case of edit the null image is allowed so use the existing image values
+        formData['image'] = model.selectedProduct.image;
+        formData['imagePath'] = model.selectedProduct.imagePath;
       }
-
-      //formData['image'] is binary so replace it with actual uploadData image url
-      formData['image'] = uploadData['imageUrl'];
-      formData['imagePath'] = uploadData['imagePath'];
 
       formData['title'] = _titleTextController.text;
       formData['description'] = _descriptionTextController.text;
@@ -176,8 +186,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
           image: formData['image'],
           imagePath: formData['imagePath'],
           location: this.location,
-          userId: model.authUser.id
-      );
+          userId: model.authUser.id);
 
       if (model.selectedProductId == null) {
         model.addProduct(productData);

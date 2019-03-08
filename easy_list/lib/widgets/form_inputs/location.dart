@@ -40,6 +40,19 @@ class LocationInputState extends State<LocationInput> {
     super.initState();
   }
 
+  void setControllerTextInitialValue(Product product, String text,
+      String productText, TextEditingController controller) {
+    if (product == null && text == '') {
+      controller.text = '';
+    } else if (product != null && text == '') {
+      controller.text = productText;
+    } else if (text != '') {
+      controller.text = text;
+    } else {
+      controller.text = '';
+    }
+  }
+
   @override
   void dispose() {
     //stop always listening, this will make sure to only listen for address change if the location widget is loaded
@@ -70,11 +83,18 @@ class LocationInputState extends State<LocationInput> {
       final coords = decodedRes['results'][0]['geometry']['location'];
       _locationData = LocationData(
           address: formattedAddr, lat: coords['lat'], lng: coords['lng']);
+
+      _goToUserLocationOnGoogleMap(_locationData);
     } else if (lat == null && lng == null) {
       _locationData = widget.product.location;
     } else {
       _locationData = LocationData(address: address, lat: lat, lng: lng);
     }
+
+    print('Yoooo');
+    print(_locationData.address);
+    print(_locationData.lat);
+    print(_locationData.lng);
 
     /*final StaticMapProvider staticMapProvider =
         StaticMapProvider('AIzaSyDp2Ed2RgWYzpfut750mb8DITmyo0afw9g');
@@ -84,8 +104,6 @@ class LocationInputState extends State<LocationInput> {
         width: 500,
         height: 300,
         maptype: StaticMapViewType.roadmap);*/
-
-    _goToUserLocationOnGoogleMap(LocationData(lat: _locationData.lat, lng: _locationData.lng, address: address));
 
     widget.setLocation(_locationData);
     setState(() {
@@ -129,9 +147,15 @@ class LocationInputState extends State<LocationInput> {
     setState(() {
       mapController = controller;
     });
+
+    if (_locationData != null) {//moving map on the location in product edit mode too.
+      _goToUserLocationOnGoogleMap(_locationData);
+    }
   }
 
   void _goToUserLocationOnGoogleMap(LocationData location) {
+    print('inside mapController');
+    print(location.lat);
     mapController.addMarker(MarkerOptions(
       position: LatLng(location.lat, location.lng),
     ));
@@ -168,16 +192,19 @@ class LocationInputState extends State<LocationInput> {
         SizedBox(
           height: 10.0,
         ),
-        _staticMapUri == null
+        /*_staticMapUri == null
             ? Container()
-            : Image.network(this._staticMapUri.toString()),
+            : Image.network(this._staticMapUri.toString()),*/
         Center(
           child: SizedBox(
             width: screenWidth * 0.95,
             height: 200.0,
             child: GoogleMap(
-              initialCameraPosition:
-                  CameraPosition(target: LatLng(0.00, 0.00), zoom: 1.0),
+              initialCameraPosition: CameraPosition(
+                  target: _locationData != null
+                      ? LatLng(_locationData.lat, _locationData.lng)
+                      : LatLng(0.00, 0.00),
+                  zoom: 14.0),
               onMapCreated: _onMapCreated,
             ),
           ),

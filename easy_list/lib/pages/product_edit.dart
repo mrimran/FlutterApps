@@ -40,6 +40,10 @@ class _ProductEditPageState extends State<ProductEditPage> {
     final titleText = _titleTextController.text.trim();
     setControllerTextInitialValue(product, titleText, _titleTextController);
 
+    if(_titleTextController.text.isEmpty && product != null) {
+      _titleTextController.text = product.title;
+    }
+
     return TextFormField(
       controller: _titleTextController,
       validator: (String value) {
@@ -57,8 +61,6 @@ class _ProductEditPageState extends State<ProductEditPage> {
   void setControllerTextInitialValue(Product product, String text, TextEditingController controller) {
     if(product == null && text == '') {
       controller.text = '';
-    } else if(product !=null && text == '') {
-      controller.text = product.title;
     } else if(text != '') {
       controller.text = text;
     } else {
@@ -69,6 +71,10 @@ class _ProductEditPageState extends State<ProductEditPage> {
   Widget _buildDescriptionTextField(Product product) {
     final descText = _descriptionTextController.text.trim();
     setControllerTextInitialValue(product, descText, _descriptionTextController);
+
+    if(_descriptionTextController.text.isEmpty && product != null) {
+      _descriptionTextController.text = product.description;
+    }
 
     return TextFormField(
       controller: _descriptionTextController,
@@ -88,6 +94,10 @@ class _ProductEditPageState extends State<ProductEditPage> {
   Widget _buildPriceTextField(Product product) {
     final priceText = _priceTextController.text.trim();
     setControllerTextInitialValue(product, priceText, _priceTextController);
+
+    if(_priceTextController.text.isEmpty && product != null) {
+      _priceTextController.text = product.price.toString();
+    }
 
     return TextFormField(
       controller: _priceTextController,

@@ -36,8 +36,12 @@ class ProductCard extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.info),
             color: Theme.of(context).accentColor,
-            onPressed: () => Navigator.pushNamed<bool>(
-                context, '/product/' + model.products[productIndex].id),
+            onPressed: () {
+              model.selectProduct(model.products[productIndex].id);
+              Navigator.pushNamed<bool>(
+                      context, '/product/' + model.products[productIndex].id)
+                  .then((_) => model.selectProduct(null));//reset product to null when going back
+            },
           ),
           IconButton(
             icon: Icon(model.products[productIndex].isFavorite

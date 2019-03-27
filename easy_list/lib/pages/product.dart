@@ -69,11 +69,14 @@ class ProductPage extends StatelessWidget {
           body: ListView(
             padding: EdgeInsets.all(10.0),
             children: <Widget>[
-              FadeInImage(
-                image: NetworkImage(product.image),
-                height: 300.0,
-                fit: BoxFit.cover,
-                placeholder: AssetImage('assets/food.jpg'),
+              Hero(
+                tag: product.id,
+                child: FadeInImage(
+                  image: NetworkImage(product.image),
+                  height: 300.0,
+                  fit: BoxFit.cover,
+                  placeholder: AssetImage('assets/food.jpg'),
+                ),
               ),
               SizedBox(
                 height: 10.0,
@@ -90,7 +93,9 @@ class ProductPage extends StatelessWidget {
               SizedBox(
                 height: 10.0,
               ),
-              Center(child: Text(product.description),),
+              Center(
+                child: Text(product.description),
+              ),
             ],
           ),
           floatingActionButton: ProductFab(product),

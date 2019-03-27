@@ -12,13 +12,24 @@ class AuthPage extends StatefulWidget {
   }
 }
 
-class AuthPageState extends State<AuthPage> {
+class AuthPageState extends State<AuthPage> with TickerProviderStateMixin {
   final Map formData = {'email': null, 'password': null};
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController passwordTextController = TextEditingController();
+  AnimationController _controller;
+  Animation _slideAnimation;
 
   AuthMode _authMode = AuthMode.Login;
+
+  void initState() {
+    _controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _slideAnimation =
+        Tween(begin: Offset(0.0, -2.0), end: Offset.zero).animate(_controller);
+
+    super.initState();
+  }
 
   DecorationImage _buildBackgroundImage() {
     return DecorationImage(
@@ -64,15 +75,24 @@ class AuthPageState extends State<AuthPage> {
   }
 
   Widget _buildPasswordConfirmTextField() {
-    return TextFormField(
-      validator: (String value) {
-        if (passwordTextController.text != value) {
-          return 'Password do not match.';
-        }
-      },
-      obscureText: true,
-      decoration: InputDecoration(
-          labelText: 'Confirm Password', filled: true, fillColor: Colors.white),
+    return FadeTransition(
+      opacity: CurvedAnimation(parent: _controller, curve: Curves.easeIn),
+      child: SlideTransition(
+        position: _slideAnimation,
+        child: TextFormField(
+          validator: (String value) {
+            if (passwordTextController.text != value &&
+                _authMode == AuthMode.Signup) {
+              return 'Password do not match.';
+            }
+          },
+          obscureText: true,
+          decoration: InputDecoration(
+              labelText: 'Confirm Password',
+              filled: true,
+              fillColor: Colors.white),
+        ),
+      ),
     );
   }
 
@@ -137,9 +157,7 @@ class AuthPageState extends State<AuthPage> {
                   SizedBox(
                     height: 10.0,
                   ),
-                  _authMode == AuthMode.Signup
-                      ? _buildPasswordConfirmTextField()
-                      : Container(),
+                  _buildPasswordConfirmTextField(),
                   _authMode == AuthMode.Signup
                       ? SizedBox(
                           height: 10.0,
@@ -149,11 +167,17 @@ class AuthPageState extends State<AuthPage> {
                     child: Text(
                         'Switch to ${_authMode == AuthMode.Login ? 'Signup' : 'Login'}'),
                     onPressed: () {
-                      setState(() {
-                        _authMode = _authMode == AuthMode.Login
-                            ? AuthMode.Signup
-                            : AuthMode.Login;
-                      });
+                      if (_authMode == AuthMode.Login) {
+                        setState(() {
+                          _authMode = AuthMode.Signup;
+                        });
+                        _controller.forward();
+                      } else {
+                        setState(() {
+                          _authMode = AuthMode.Login;
+                        });
+                        _controller.reverse();
+                      }
                     },
                   ),
                   SizedBox(

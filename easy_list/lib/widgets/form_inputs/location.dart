@@ -115,15 +115,26 @@ class LocationInputState extends State<LocationInput> {
   }
 
   void _getUserLocation() async {
-    final location = geoloc.Location();
-    final currLocation = await location.getLocation();
-    final address = await _getAddressFromGeocode(
-        currLocation.latitude, currLocation.longitude);
+    try {
+      final location = geoloc.Location();
+      final currLocation = await location.getLocation();
+      final address = await _getAddressFromGeocode(
+          currLocation.latitude, currLocation.longitude);
 
-    getStaticMap(address,
-        geocode: false,
-        lat: currLocation.latitude,
-        lng: currLocation.longitude);
+      getStaticMap(address,
+          geocode: false,
+          lat: currLocation.latitude,
+          lng: currLocation.longitude);
+    } catch (error) {
+      showDialog(context: context, builder: (BuildContext context) {
+        return AlertDialog(title: Text('Could not fetch location'),
+          content: Text('Please add an address manually.'), actions: <Widget>[
+            FlatButton(child: Text('Okay'), onPressed: () {
+              Navigator.pop(context);
+            },)
+          ],);
+      });
+    }
   }
 
   Future _getAddressFromGeocode(double lat, double lng) async {
@@ -143,7 +154,8 @@ class LocationInputState extends State<LocationInput> {
       mapController = controller;
     });
 
-    if (_locationData != null) {//moving map on the location in product edit mode too.
+    if (_locationData !=
+        null) { //moving map on the location in product edit mode too.
       _goToUserLocationOnGoogleMap(_locationData);
     }
   }
@@ -152,7 +164,7 @@ class LocationInputState extends State<LocationInput> {
     print('inside mapController');
     print(location.lat);
 
-    if(mapController == null) {
+    if (mapController == null) {
       return;
     }
 
@@ -169,7 +181,10 @@ class LocationInputState extends State<LocationInput> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
+    double screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
     return Column(
       children: <Widget>[
         TextFormField(

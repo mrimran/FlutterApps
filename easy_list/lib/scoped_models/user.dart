@@ -7,6 +7,7 @@ import 'package:rxdart/subjects.dart';
 
 import '../models/user.dart';
 import '../models/auth.dart';
+import './products.dart';
 
 mixin UserModel on Model {
   User _authUser;
@@ -15,6 +16,7 @@ mixin UserModel on Model {
   final authKey = 'AIzaSyBxr8j7o3760Nvp-kkDgJK7IcAsUQBCbTs';
   static User loggedInUser;
   Timer authTimer;
+  ProductsModel _productsModel;
 
   //To emit events so that on other places of application we can moniter if the logout got triggered on time out
   PublishSubject<bool> userSubject = PublishSubject();

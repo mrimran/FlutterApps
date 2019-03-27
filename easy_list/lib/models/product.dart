@@ -12,6 +12,7 @@ class Product {
   final String imagePath;
   bool isFavorite;
   String userId;
+  String userEmail;
   LocationData location;
 
   Product(
@@ -23,6 +24,7 @@ class Product {
       this.imagePath,
       this.isFavorite = false,
       this.userId,
+      this.userEmail,
       this.location});
 
   Map get toMap {

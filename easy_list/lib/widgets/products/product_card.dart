@@ -80,7 +80,6 @@ class ProductCard extends StatelessWidget {
             location: LocationData(
                 lat: product.location.lat, lng: product.location.lng),
           ),
-          Text(product.userId != null ? product.userId : ''),
           _buildActionButtons(context)
         ],
       ),

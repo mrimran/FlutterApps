@@ -22,7 +22,7 @@ class AddressTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.5),
+      padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 5.0),
       child: GestureDetector(
         onTap: () {
           openMapDialog(context);
@@ -30,6 +30,7 @@ class AddressTag extends StatelessWidget {
         child: Text(
           address,
           style: TextStyle(fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
         ),
       ),
       decoration: BoxDecoration(

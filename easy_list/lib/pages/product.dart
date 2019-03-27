@@ -76,7 +76,7 @@ class ProductPage extends StatelessWidget {
                 placeholder: AssetImage('assets/food.jpg'),
               ),
               SizedBox(
-                height: 5.0,
+                height: 10.0,
               ),
               AddressTag(
                 product.location.address,
@@ -90,7 +90,7 @@ class ProductPage extends StatelessWidget {
               SizedBox(
                 height: 10.0,
               ),
-              Text(product.description),
+              Center(child: Text(product.description),),
             ],
           ),
           floatingActionButton: ProductFab(product),

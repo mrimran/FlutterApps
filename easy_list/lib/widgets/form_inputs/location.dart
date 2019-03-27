@@ -151,6 +151,11 @@ class LocationInputState extends State<LocationInput> {
   void _goToUserLocationOnGoogleMap(LocationData location) {
     print('inside mapController');
     print(location.lat);
+
+    if(mapController == null) {
+      return;
+    }
+
     mapController.addMarker(MarkerOptions(
       position: LatLng(location.lat, location.lng),
     ));

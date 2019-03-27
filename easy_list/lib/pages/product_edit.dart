@@ -142,6 +142,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
     formKey.currentState.save(); //TODO: Experiment with this
 
     formData['userId'] = model.authUser.id;
+    formData['userEmail'] = model.authUser.email;
 
     model.toggleIsLoading();
 
@@ -186,7 +187,8 @@ class _ProductEditPageState extends State<ProductEditPage> {
           image: formData['image'],
           imagePath: formData['imagePath'],
           location: this.location,
-          userId: model.authUser.id);
+          userId: model.authUser.id,
+          userEmail: model.authUser.email);
 
       if (model.selectedProductId == null) {
         model.addProduct(productData);

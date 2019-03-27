@@ -3,6 +3,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 import '../../models/product.dart';
 import '../../scoped_models/main.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProductFab extends StatefulWidget {
   final Product product;
@@ -30,7 +31,14 @@ class _ProductFabState extends State<ProductFab> {
                 heroTag: 'contact',
                 backgroundColor: Theme.of(context).cardColor,
                 mini: true,
-                onPressed: () {},
+                onPressed: () async {
+                  final url = 'mailto:${widget.product.userEmail}';
+                  if(await canLaunch(url)) {
+                    await launch(url);
+                  } else {
+                    throw 'Could not launch URL';
+                  }
+                },
                 child: Icon(
                   Icons.mail,
                   color: Theme.of(context).primaryColor,

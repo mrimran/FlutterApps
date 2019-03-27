@@ -189,6 +189,8 @@ mixin ProductsModel on Model {
               location: location,
               userId:
                   productData['userId'] == null ? '' : productData['userId'],
+              userEmail:
+              productData['userEmail'] == null ? '' : productData['userEmail'],
               isFavorite: productData['wishlistUsers'] != null
                   ? (productData['wishlistUsers'] as Map<String, dynamic>)
                       .containsKey(UserModel.loggedInUser.id)

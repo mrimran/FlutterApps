@@ -46,7 +46,7 @@ class _MyAppState extends State<MyApp> {
       model: model,
       //initiating only one instance of the ProductsModel in whole application
       child: MaterialApp(
-        title: "ProductList",
+        title: "Product List",
         theme: ThemeData(
             primarySwatch: Colors.deepOrange,
             accentColor: Colors.deepPurple,

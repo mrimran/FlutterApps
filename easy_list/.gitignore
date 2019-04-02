@@ -72,3 +72,5 @@ build/
 
 node_modules
 flutter-easylist.json
+
+key.properties

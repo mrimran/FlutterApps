@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -9,6 +10,7 @@ import '../models/product.dart';
 import '../scoped_models/main.dart';
 import '../models/location_data.dart';
 import '../widgets/form_inputs/image.dart';
+import '../widgets/ui_elements/adaptive_progress_indicator.dart';
 
 class ProductEditPage extends StatefulWidget {
   @override
@@ -226,7 +228,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
   Widget _buildSubmitButton(MainModel model) {
     return model.isLoading
         ? Center(
-            child: CircularProgressIndicator(),
+            child: AdaptiveProgressIndicator(),
           )
         : RaisedButton(
             color: Theme.of(context).accentColor,
